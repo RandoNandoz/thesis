@@ -1,0 +1,95 @@
+\chapter{Background}
+
+% \section{Figures}
+
+% \begin{figure}[h]
+%   \begin{center}
+%       \includegraphics[width=0.95\linewidth]{body_chapters/chap_2/figs/little_house_on_the_swiss_prairie.jpg}
+%       \caption[Short Caption to Appear in List of Figures.]{Longer caption to appear in the main body of the text below (or above) the actual figure.}
+%       \label{fig:little_house_on_the_swiss_prairie}
+%   \end{center}
+% \end{figure}
+
+% Figures can be placed with the \textbf{\textbackslash figure} environment. Using the option \textit{h} in the optional arguments is useful to 'lock' figures in the place you want them to, otherwise Latex will place it where it sees fit.
+
+% Use the \textbf{\textbackslash label} command to generate labels; these act as handles which you can refer to in other parts of your work with the \textbf{\textbackslash ref} command.
+
+% Notice the \textbf{short caption} and \textbf{long caption} and in the \textbf{\textbackslash caption} command within the \textbf{\textbackslash figure} environment. The List of Tables/Figures pages will use the short caption while the longer caption appears with the figure.
+
+% \section{Some Section}
+% \lipsum[2]
+
+
+
+\section{Unit Test Carving}
+
+Unit test carving, originally called unit test factoring, was introduced by Saff et al. Test carving is described to be ``a technique for automatically creating fast, focused unit tests from slow system-wide tests; each new unit test exercises only a subset of the functionality exercised by the system tests" \cite*{saff2004mock, saff2005automatic}. Test carving techniques typically involve record-and-replay (also called carve-and-replay \cite*{elbaum2006carving, elbaum2008carving}), recording function executions, serializing the inputs and outputs of the function, then invoking the function again with said captured inputs.
+
+Elbaum et al. \cite{elbaum2006carving} coined the term unit test carving, and they abstractly break down unit test carving for a given method $m$ during program execution. Both the program state before the first instruction of $m$, called $s_{pre}$ and the state after the final instruction of $m$, called $s_{post}$ are captured. A pair of states before and after the execution of $m$: ($s_{pre}$, $s_{post}$) constitute a unit test for $m$. As the codebase of a program evolves, $m$ may change over time.
+
+The execution of a carved unit test must first restore $s_{pre}$, execute $m$, then compare the state after the execution ($s_{m}$) to $s_{post}$. In common software engineering parlance, the execution of a carved unit test is as follows:
+
+\begin{itemize}
+    \item Restoring $s_{pre} \rightarrow$ test setup; typically found in the fixtures or the \verb|@BeforeEach| part of a unit test.
+    \item Executing $m \rightarrow$ running the function-under-test
+    \item Comparing $s_{m}$ to $s_{post} \rightarrow$ the test oracle; typically assertions like \verb|assertEquals|.
+\end{itemize}
+
+There are two approaches in capturing $s_{pre}$, explains Elbaum et al.: state-based and action-based.
+
+State-based capture involves saving $s_{pre}$, typically serializing $s_{pre}$ to disk, then de-serializing it to restore $s_{pre}$. ExploTest implements this in its pickle-mode. This comes with certain challenges which we will describe later in this thesis. The majority (TODO: CHECK IF THIS IS ACTUALLY TRUE!) of unit testing tools use state-based capture.
+
+Action-based capture involves saving the instructions before $s_{pre}$, and later replaying those instructions to re-create $s_{pre}$. This resolves many of the challenges of state-based capture, but is harder to do in practice. ExploTest has a limited version of action-based capture in its argument reconstruction mode.
+
+\subsection{Challenges in State-based Capture}
+
+\subsubsection{Evolution and Serialization}
+Serialization involves storing the state of the program to disk \cite{isocppserialization}. In turn, when we want to restore the state of the program, we have to load that state from disk. This state is entirely unaware of changes to the source code, which means any changes to the structure of the object in the source code at a later time is not reflected in the serialized format. In turn, this makes the unit tests more brittle to breaking from code evolution.
+
+\subsubsection{Serialization Opaqueness}
+Unlike the code to create objects in source code, reading objects from disk does not at all explain the process that got the object to that serialized state. This makes it much more confusing for maintainers of source code that utilizes serialized state in unit tests to change the unit tests as code evolves, worsening the evolution issue.
+MicroTestCarver by Deljouyi and Zaidman \cite{deljouyi2023generating} tries to remedy this issue in their work by serializing to XML, a human-editable file format using the XStream library, however, there is no similar library that produces any kind of human readable serialization output in Python.
+
+\subsubsection{Non-serializable Objects}
+
+There are objects that cannot be serialized, which typically have ill-defined representations after de-serialization. Currently, the most robust Python serialization library which we elected to use, dill \cite{dilldocs} do not support generator, traceback, and code frame objects. Code frame objects cannot be captured by state-based capture, as the creation of a code frame object entails the creation of native code objects which cannot be done without some action-based capture. Similarly, network sockets and active network connections do not have a meaningful value when de-serialized, as the server they connect has likely since closed the connection. Finally, objects which explicitly reject serialization by disabling \verb|__reduce__| cannot be serialized. This family of objects necessitates the use of action-based capture.
+
+
+
+\subsection{Challenges in Action-based Capture}
+
+\subsubsection{The Object Creation Problem}
+The Object Creation Problem, defined by Bach et al. \cite{bach2020determining}, is the problem of finding the correct sequences of method calls to construct an object. In Python, creating is objects is not always as simple as calling the \verb|__init__| constructor, instead, objects rely on hierarchies and overridden \verb|__new__|, or other classes like in the factory design pattern.
+
+\subsubsection{Arbitrary Object Modification}
+Explained by Politz et al. \cite{politz2013python}, the semantics of Python allow for arbitrary modification to object attributes at any time in the programs. The shape of an object, which we define to be the number and names of fields of an object can change at any point in a Python program.
+
+
+While this is a problem in unmanaged languages like C++, and the authors of \cite{bach2020determining} discuss this issue, they consider it out of scope of the object creation problem, as it is unidiomatic in C++, and often leads to undefined behaviour. Unfortunately, this technique of arbitrary modification of objects at any point is often used by Python programmers.
+
+This presents challenges to action-based capture, as existing action-based capture unit test carving tools like ARTISAN \cite{gambi2023action} assume that the shape of an object does not change, and can assume the object 
+
+\section{Prior Work in Test Carving for Python}
+
+
+\subsection{Pythoscope}
+
+Pythoscope, by Kwiatkowski and Clements-Tiberio \cite*{pythoscopewikidot,pythoscopegithub,l2011capture} is an open source Python 2 unit test generation tool, created around 2008. 
+
+\subsection{Auger}
+\cite{augerblogspot}
+
+\subsection{Fuzzing Book Carver}
+\cite{fuzzingbook2023:Carver}
+
+\subsection{Genthat}
+
+
+
+\section{How ExploTest Performs Unit Test Carving of Python Programs}
+
+Originally created by Zihao Huang under the supervision of Dr. Caroline Lemieux, ExploTest is a unit test carving tool used to created unit tests from exploratory test runs. As defined by Kaner \cite{kaner2008tutorial}, exploratory testing is an unscripted technique where the software designer verifies the program's correctness using their own intuition and domain knowledge to uncover defects and create test oracles. Exploratory testing exercise the whole program, and we aim to capture unit tests for specific methods. 
+
+
+
+% \section{}

@@ -1,0 +1,167 @@
+% !TEX enableShellEscape = yes
+% (The above line makes atom-latex compile with -shell-escape for
+% minted, and is just ignored by other systems.)
+
+%====================================================
+% Please read the README.txt file first.
+%====================================================
+
+% Change the "masc" command to your degree title
+\documentclass[masc,oneside]{ubcthesis}
+
+% Looser page layout (increase margins slightly)
+\usepackage[margin=1.25in]{geometry}
+
+% Some packages that are necessary and that may be useful. Be careful about removing any as it may cause some formatting errors.
+\usepackage[unicode=true,
+  linktocpage,
+  linkbordercolor={0.5 0.5 1},
+  citebordercolor={0.5 1 0.5},
+linkcolor=blue]{hyperref}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{graphicx}
+\usepackage{afterpage}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{pdflscape}
+\usepackage{rotating}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{psfrag}
+\usepackage{makecell}
+\usepackage{hyperref}
+\usepackage{parskip}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{float}
+
+% This package is for generating the dummy text you'll see on some pages.
+\usepackage{lipsum}
+
+% New command for the Examining Committee Page
+\newcommand{\committeeMember}[4]{#1, #2, #3\\\textit{#4}}
+
+
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+
+%================================================
+% THESE COMMANDS ARE REQUIRED
+\def \theAuthor {Randy Zhu}
+\def \theTitle {ExploTest, a Python Unit Test Carving Tool}
+% \def \theSubtitle {Thesis Subtitle, if applicable}
+\def \theDegree {Master of Degree Title} % remember to change the class at the top of this file in the \documentclass command
+\def \theProgramTitle {Computer Science}
+\def \theCopyrightyear {2026}
+\def \theSubmitdate {April 2026}
+%===============================================
+
+% These commands are optional.  The defaults are shown.  You only
+% need to include them if you need a different value
+\institution{The University Of British Columbia}
+
+% If you are at the Okanagan campus, then you should specify these
+% instead.
+\faculty{}
+%\institutionaddress{Okanagan}
+% \faculty{The Faculty of Graduate and Postdoctoral Studies}
+\institutionaddress{Vancouver}
+
+% You can issue as many of these as you have...
+% \previousdegree{B.ASc., The University of British Columbia, 2021}
+
+% You can override the option setting here.
+% \degreetitle{Jack of All Trades}
+
+% These commands pass the above definitions to the class file to generate the title page
+\title{\theTitle}
+% \subtitle{\theSubtitle}
+\author{\theAuthor}
+\copyrightyear{\theCopyrightyear}
+\submitdate{\theSubmitdate}
+% \submitdate{\monthname\ \number\year} % The "\ " is required after
+% \monthname to prevent the
+% command from eating the space.
+\program{\theProgramTitle}
+
+% These commands make the page numbering consistent with G+PS
+\renewcommand\thepart         {\Roman{part}}
+\renewcommand\thechapter      {\arabic{chapter}}
+\renewcommand\thesection      {\thechapter.\arabic{section}}
+\renewcommand\thesubsection   {\thesection.\arabic{subsection}}
+\renewcommand\thesubsubsection{\thesubsection.\arabic{subsubsection}}
+\renewcommand\theparagraph    {\thesubsubsection.\arabic{paragraph}}
+\renewcommand\thesubparagraph {\theparagraph.\arabic{subparagraph}}
+
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{2}
+
+% Here is an example of a "Program" environment defined with the
+% "float" package.  The list of programs will be stored in the file
+% ubcsample.lop and the numbering will start with the chapter
+% number.  The style will be "ruled".
+\floatstyle{ruled}
+\newfloat{Program}{htbp}{lop}[chapter]
+
+% Used only for sending to reviewers
+% \usepackage{setspace}
+% \onehalfspacing
+
+\begin{document}
+
+%% This starts numbering in Roman numerals as required for the thesis style and is mandatory.
+\frontmatter
+
+% This next section is for the admin pages. These commented lines exist to tell you what you need
+
+%%% The order of the following components should be preserved.  The order
+%%% listed here is the order currently required by FoGS:        \\
+%%% Title (Mandatory)                                           \\
+%%% Committee Page (Mandatory)                                  \\
+%%% Preface (Manditory if any collaborator contributions)       \\
+%%% Abstract (Mandatory)                                        \\
+%%% List of Contents, Tables, Figures, etc. (As appropriate)    \\
+%%% Acknowledgements (Optional)                                 \\
+%%% Dedication (Optional)                                       \\
+
+% Now
+\maketitle                      %% Mandatory
+\include{admin_chapters/committee_page/committee_page} %% Very mandatory
+
+\begin{abstract}                %% Mandatory -  maximum 350 words
+  The abstract is a concise and accurate summary of the research contained in the thesis. It states the problem, the methods of investigation, and the general conclusions, and should not contain tables, graphs or illustrations. It must not exceed 350 words, and should contain relevant keywords that will make your thesis more likely to be found in an electronic search. Do not put a separate list of keywords. There must be a single abstract for the entire thesis.
+\end{abstract}
+
+% These statements generate the rest of the admin pages
+\include{admin_chapters/lay_summary/lay_summary}    %% Mandatory
+\include{admin_chapters/preface/preface}            %% Mandatory
+\tableofcontents                %% Mandatory
+% \listoftables                   %% Mandatory if thesis has tables
+% \listoffigures                  %% Mandatory if thesis has figures
+\include{admin_chapters/list_of_abbreviations/list_of_abbreviations}    %% Optional
+\include{admin_chapters/list_of_symbols/list_of_symbols}                %% Optional
+\include{admin_chapters/acknowledgements/acknowledgements}              %% Optional
+\include{admin_chapters/dedication/dedication} %% Optional
+
+% Switch the numbering to arabic
+\mainmatter
+% THIS IS THE MAIN BODY OF YOUR THESIS.
+% Add new chapters as you see fit. It will be useful to retain the structure already defined in the body_chapters folder.You will have to manually add and remove \include statements like these as you add and remove chapters.
+
+\include{body_chapters/chap_1/chap_1}
+\include{body_chapters/chap_2/chap_2}
+\include{body_chapters/chap_3/chap_3}
+\include{body_chapters/chap_4/chap_4}
+
+% Insert the bibliography
+\bibliographystyle{ACM-Reference-Format} % We choose the "unsrt" reference style
+\bibliography{sample_bib} % Entries are in the sample_bib.bib file
+
+% ========================================
+% APPENDICES
+% ========================================
+\appendix
+% Add as many of the following statements as you need.
+\include{body_chapters/chap_a1/chap_a1}
+\include{body_chapters/chap_a2/chap_a2}
+
+\end{document}
