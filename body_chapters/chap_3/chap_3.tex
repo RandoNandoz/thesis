@@ -27,19 +27,19 @@ We evaluate ExploTest on 22 individual bugs across 12 repositories:
   \label{tab:eval_repositories}
   \begin{tabular}{@{} l l p{8.5cm} @{}}
     \toprule
-    \textbf{Project name} & \textbf{Category} & \textbf{Description} \\ \midrule
-    \verb|gunicorn|   & Web framework & HTTP server. \\
-    \verb|click|      & UI library & Library for creating command-line interfaces. \\
-    \verb|seaborn|    & Data visualization & Data visualization library. \\
-    \verb|Pygments|   & Source code analysis & Tool for syntax highlighting source code. \\
-    \verb|pylint|     & Source code analysis & Linter for Python code. \\
-    \verb|IPython|    & Meta tooling & Enhanced interactive Python REPL. \\
-    \verb|httpie|     & Command-line utility & Command-line HTTP client and API testing tool. \\
-    \verb|Tornado|    & Web framework & Web framework. \\
-    \verb|black|      & Source code analysis & Python source code formatter. \\
-    \verb|sanic|      & Web framework & Web framework. \\
-    \verb|PySnooper|  & Meta tooling & Debugging tool that traces function inputs, outputs, and state. \\
-    \verb|youtube-dl| & Command-line utility & Command-line tool for downloading videos from online streaming services (e.g., YouTube). \\
+    \textbf{Project name} & \textbf{Category}    & \textbf{Description}                                                                     \\ \midrule
+    \verb|gunicorn|       & Web framework        & HTTP server.                                                                             \\
+    \verb|click|          & UI library           & Library for creating command-line interfaces.                                            \\
+    \verb|seaborn|        & Data visualization   & Data visualization library.                                                              \\
+    \verb|Pygments|       & Source code analysis & Tool for syntax highlighting source code.                                                \\
+    \verb|pylint|         & Source code analysis & Linter for Python code.                                                                  \\
+    \verb|IPython|        & Meta tooling         & Enhanced interactive Python REPL.                                                        \\
+    \verb|httpie|         & Command-line utility & Command-line HTTP client and API testing tool.                                           \\
+    \verb|Tornado|        & Web framework        & Web framework.                                                                           \\
+    \verb|black|          & Source code analysis & Python source code formatter.                                                            \\
+    \verb|sanic|          & Web framework        & Web framework.                                                                           \\
+    \verb|PySnooper|      & Meta tooling         & Debugging tool that traces function inputs, outputs, and state.                          \\
+    \verb|youtube-dl|     & Command-line utility & Command-line tool for downloading videos from online streaming services (e.g., YouTube). \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -57,130 +57,65 @@ The evaluation takes place on an x86\_64 computer running Ubuntu 24.04.3. All co
 \subsection{ExploTest Outcomes}
 
 The unit tests that ExploTest produces can be of different qualities, or it may not produce a unit test at all due to technical limitations. As discussed in the introduction,
-unit tests have to exercise the function-under-test (FUT) and then assess its return value with an oracle, which in Python is an assertion. The table below outlines how we will categorize these different outcomes. In answering RQ2, we can group tests that 
+unit tests have to exercise the function-under-test (FUT) and then assess its return value with an oracle, which in Python is an assertion. The table below outlines how we will categorize these different outcomes. In answering RQ2, we can group tests that
 
 \subsection{Flakiness}
 A unit test is considered flaky when it exhibits both passing and failing results on the same version of the source code without any changes to the code itself. We run the test twice as a rudimentary test for flakiness.
 
-% \begin{sidewaystable}[p]
-% \centering
-% \caption{Per-bug evaluation results}
-% \label{tab:per_bug_results}
-% \small
-% \begin{tabularx}{\textheight}{@{} l l r c c c c c c X @{}}
-%   \toprule
-%   \textbf{Repo} & \textbf{ID} & \textbf{\# of tests created} & \textbf{Function called} & \textbf{Output is correct} & \textbf{Oracle created} & \textbf{Passes on good code} & \textbf{Fails on bad code} & \textbf{Comments} \\
-%   \midrule
-%   % TODO: fill in results
-%   \\
-%   \bottomrule
-% \end{tabularx}
-% \end{sidewaystable}
-
-% 1. Define a new column type 'Y'
-% This acts like 'X' (wraps text) but centers the content.
-
-
-
-% \begin{sidewaystable}[p]
-% \centering
-% \caption{Per-bug evaluation results}
-% \label{tab:per_bug_results}
-% \small
-
-% % 8 Columns defined: Repo, ID, #Tests, FuncCalled, OutputCorrect, OracleCreated, PassesGood, FailsBad
-% \begin{tabularx}{\textheight}{@{} l l r Y Y Y Y Y @{}}
-%   \toprule
-%   \textbf{Repo} & 
-%   \textbf{ID} & 
-%   \textbf{\# tests} & 
-%   \textbf{Function called} & 
-%   \textbf{Output correct} & 
-%   \textbf{Oracle created} & 
-%   \textbf{Passes good code} & 
-%   \textbf{Fails bad code} \\
-%   \midrule
-%   black      & 12  & 490 & Yes & Yes & No  & N/A & N/A \\
-%   black      & 13  & 3   & Yes & Yes & Yes & Yes & No  \\
-%   black      & 15  & 3   & Yes & Yes & Yes & Yes & No  \\
-%   httpie     & 3   & 1   & Yes & Yes & Yes & Yes & Yes \\
-%   PySnooper  & 2   & 4   & Yes & Yes & Yes & Yes & No  \\
-%   PySnooper  & 3   & 3   & Yes & Yes & Yes & Yes & No  \\
-%   sanic      & 1   & 6   & Yes & Yes & Yes & No  & Yes \\
-%   sanic      & 2   & 0   & N/A & N/A & N/A & N/A & N/A \\
-%   sanic      & 3   & 0   & N/A & N/A & N/A & N/A & N/A \\
-%   tornado    & 10  & 0   & N/A & N/A & N/A & N/A & N/A \\
-%   tornado    & 14  & 2   & Yes & Yes & No  & N/A & N/A \\
-%   tornado    & 15  & 1   & Yes & Yes & Yes & Yes & No  \\
-%   tornado    & 4   & 2   & Yes & Yes & Yes & Yes & No  \\
-%   youtube-dl & 12  & 0   & N/A & N/A & N/A & N/A & N/A \\
-%   click      & 3071 & TBD & TBD & TBD & TBD & TBD & TBD \\
-%   gunicorn   & 3144 & TBD & TBD & TBD & TBD & TBD & TBD \\
-%   pygments   & 2382 & TBD & TBD & TBD & TBD & TBD & TBD \\
-%   pylint     & 10373 & TBD & TBD & TBD & TBD & TBD & TBD \\
-%   pylint     & 10402 & TBD & TBD & TBD & TBD & TBD & TBD \\
-%   seaborn    & 3542 & TBD & TBD & TBD & TBD & TBD & TBD \\
-%   seaborn    & 3553 & TBD & TBD & TBD & TBD & TBD & TBD \\
-%   ipython    & 14930 & TBD & TBD & TBD & TBD & TBD \\
-%   \bottomrule
-% \end{tabularx}
-% \end{sidewaystable}
-
-% \begin{landscape}
 \begin{table}[p]
-\centering
-\caption{Per-bug evaluation results}
-\label{tab:per_bug_results}
-\small
-% Note: Changed width from \textheight to \linewidth for landscape mode
-\begin{tabularx}{\linewidth}{@{} l l r Y Y Y Y Y @{}}
-  \toprule
-  \textbf{Repo} & 
-  \textbf{ID} & 
-  \textbf{\# of tests} & 
-  \textbf{Function called} & 
-  \textbf{Output correct} & 
-  \textbf{Oracle created} & 
-  \textbf{Passes on good code} & 
-  \textbf{Fails on bad code} \\
-  \midrule
-  black      & 12    & 490        & Yes & Yes & No  & N/A & N/A \\
-  black      & 13    & 3          & Yes & Yes & Yes & Yes & No  \\
-  black      & 15    & 1          & Yes & Yes & Yes & Yes & No  \\
-  httpie     & 3     & 1          & Yes & Yes & Yes & Yes & Yes \\
-  PySnooper  & 2     & 4          & Yes & Yes & Yes & Yes & No  \\
-  PySnooper  & 3     & 1          & Yes & Yes & Yes & Yes & No  \\
-  sanic      & 1     & 6          & Yes & Yes & Yes & Yes & No  \\
-  sanic      & 2     & 0          & N/A & N/A & N/A & N/A & N/A \\
-  sanic      & 3     & 3          & Yes & Yes & Yes & Yes & Yes \\
-  tornado    & 10    & 0          & N/A & N/A & N/A & N/A & N/A \\
-  tornado    & 14    & 2          & Yes & Yes & No  & N/A & N/A \\
-  tornado    & 15    & 1          & Yes & Yes & Yes & Yes & No  \\
-  tornado    & 4     & 2          & Yes & Yes & Yes & Yes & No  \\
-  youtube-dl & 12    & 0          & N/A & N/A & N/A & N/A & N/A \\
-  click      & 3071  & 4 P / 4 ARR & Yes & Yes & No  & Yes & No  \\
-  gunicorn   & 3144  & 0          & N/A & N/A & N/A & N/A & N/A \\
-  ipython    & 14930 & 0          & N/A & N/A & N/A & N/A & N/A \\
-  pylint     & 10373 & 1          & Yes & Yes & Yes & Yes & No  \\
-  pylint     & 10402 & 2          & Yes & Yes & Yes & Yes & No  \\
-  seaborn    & 3542  & 1          & Yes & Yes & No  & Yes & No  \\
-  seaborn    & 3553  & 0          & N/A & N/A & N/A & N/A & N/A \\
-  pygments   & 2382  & 1          & Yes & Yes & Yes & Yes & No  \\
-  \bottomrule
-\end{tabularx}
+  \centering
+  \caption{Per-bug evaluation results}
+  \label{tab:per_bug_results}
+  \small
+  % Note: Changed width from \textheight to \linewidth for landscape mode
+  \begin{tabularx}{\linewidth}{@{} l l r Y Y Y Y Y @{}}
+    \toprule
+    \textbf{Repo}                &
+    \textbf{ID}                  &
+    \textbf{\# of tests}         &
+    \textbf{Function called}     &
+    \textbf{Output correct}      &
+    \textbf{Oracle created}      &
+    \textbf{Passes on good code} &
+    \textbf{Fails on bad code}                                                       \\
+    \midrule
+    black                        & 12    & 490         & Yes & Yes & No  & N/A & N/A \\
+    black                        & 13    & 3           & Yes & Yes & Yes & Yes & No  \\
+    black                        & 15    & 1           & Yes & Yes & Yes & Yes & No  \\
+    httpie                       & 3     & 1           & Yes & Yes & Yes & Yes & Yes \\
+    PySnooper                    & 2     & 4           & Yes & Yes & Yes & Yes & No  \\
+    PySnooper                    & 3     & 1           & Yes & Yes & Yes & Yes & No  \\
+    sanic                        & 1     & 6           & Yes & Yes & Yes & Yes & No  \\
+    sanic                        & 2     & 0           & N/A & N/A & N/A & N/A & N/A \\
+    sanic                        & 3     & 3           & Yes & Yes & Yes & Yes & Yes \\
+    tornado                      & 10    & 0           & N/A & N/A & N/A & N/A & N/A \\
+    tornado                      & 14    & 2           & Yes & Yes & No  & N/A & N/A \\
+    tornado                      & 15    & 1           & Yes & Yes & Yes & Yes & No  \\
+    tornado                      & 4     & 2           & Yes & Yes & Yes & Yes & No  \\
+    youtube-dl                   & 12    & 0           & N/A & N/A & N/A & N/A & N/A \\
+    click                        & 3071  & 4 P / 4 ARR & Yes & Yes & No  & Yes & No  \\
+    gunicorn                     & 3144  & 0           & N/A & N/A & N/A & N/A & N/A \\
+    ipython                      & 14930 & 0           & N/A & N/A & N/A & N/A & N/A \\
+    pylint                       & 10373 & 1           & Yes & Yes & Yes & Yes & No  \\
+    pylint                       & 10402 & 2           & Yes & Yes & Yes & Yes & No  \\
+    seaborn                      & 3542  & 1           & Yes & Yes & No  & Yes & No  \\
+    seaborn                      & 3553  & 0           & N/A & N/A & N/A & N/A & N/A \\
+    pygments                     & 2382  & 1           & Yes & Yes & Yes & Yes & No  \\
+    \bottomrule
+  \end{tabularx}
 \end{table}
 % \end{landscape}
 
 \subsubsection{Table columns}
 \begin{itemize}
-    \item \textbf{Repo}: The repository the bug originates from.
-    \item \textbf{ID}: For bugs from BugsInPy, the BugsInPy ID that the bug is associated with. For bugs from QuAC, this is the GitHub issue number that the bug is associated with.
-    \item \textbf{\# of tests}: The number of unit tests generated by the tool. The tool can generate $>1$ test when the FUT is exercised more than once by the system test, or if recursive calls occur. $0$ tests are generated when the tool fails to generate any test at all.
-    \item \textbf{Function called}: Does the tool correctly setup the required 
-    \item \textbf{Output correct}: Whether the output of the function-under-test exercised by the unit test is equivalent to the system test.
-    \item \textbf{Oracle created}: Whether assertions were created to determine the software functions correctly.
-    \item \textbf{Passes good code}: Whether the assertions pass when running on the correct code (i.e., the code the test was generated on).
-    \item \textbf{Fails on bad code}: Whether the assertions fail when running on the buggy code (i.e., they detect the bug).
+  \item \textbf{Repo}: The repository the bug originates from.
+  \item \textbf{ID}: For bugs from BugsInPy, the BugsInPy ID that the bug is associated with. For bugs from QuAC, this is the GitHub issue number that the bug is associated with.
+  \item \textbf{\# of tests}: The number of unit tests generated by the tool. The tool can generate $>1$ test when the FUT is exercised more than once by the system test, or if recursive calls occur. $0$ tests are generated when the tool fails to generate any test at all.
+  \item \textbf{Function called}: Does the tool correctly setup the required
+  \item \textbf{Output correct}: Whether the output of the function-under-test exercised by the unit test is equivalent to the system test.
+  \item \textbf{Oracle created}: Whether assertions were created to determine the software functions correctly.
+  \item \textbf{Passes good code}: Whether the assertions pass when running on the correct code (i.e., the code the test was generated on).
+  \item \textbf{Fails on bad code}: Whether the assertions fail when running on the buggy code (i.e., they detect the bug).
 \end{itemize}
 
 % flatten structures
@@ -226,7 +161,7 @@ TBD, pending actual results.
 
   \item Generate the test on the non-buggy version of the code using the system test case:
 
-    Did the tool crash? Were exceptions or errors emitted and what kind?
+        Did the tool crash? Were exceptions or errors emitted and what kind?
 
   \item If a non-empty file was produced, inspect the file and run the test using a debugger to determine whether the FUT was reached. Observe the output of the function from the generated the unit test against the output of the system test. If they are the same, we can consider the FUT to be exercised.
 
@@ -244,17 +179,17 @@ Using the buckets we have in \hyperref[sec:Dataset]{section 3.1.2}, we can summa
 We time the time it takes to execute the system test with GNU \verb|time| version 1.9 on our environment mentioned in section 3.2. We calculate and discuss three metrics:
 
 \begin{itemize}
-    \item The bug detection speedup, $\frac{T^{B}_{\text{sys}}}{T^{B}_{\text{unit}}}$, which is the speedup multiplier offered by the unit test to catch buggy code.
-    
-    It is the ratio of the time it takes for a system test on buggy code to run ($T^{B}_{\text{sys}}$) and the time it takes for a unit test on buggy code ($T^{B}_{\text{unit}}$).
-    \item The regression verification speedup, $\frac{T^{P}_{\text{sys}}}{T^{P}_{\text{unit}}}$, which is the speedup multiplier offered by the unit tests to validate code changes on a correct codebase.
-    
-    It is the ratio of the time it takes for a system test on correct code to run ($T^{P}_{\text{sys}}$) and the time it takes for a unit test on correct code ($T^{P}_{\text{unit}}$).
+  \item The bug detection speedup, $\frac{T^{B}_{\text{sys}}}{T^{B}_{\text{unit}}}$, which is the speedup multiplier offered by the unit test to catch buggy code.
 
-    % q for next meeting: is this meaningful? considering cache warm ups, etc.
-    \item Carving time, which is the difference between the system test running with ExploTest and without ExploTest.
-    
-    It is the ratio of the time to run the program while carving and without carving.
+        It is the ratio of the time it takes for a system test on buggy code to run ($T^{B}_{\text{sys}}$) and the time it takes for a unit test on buggy code ($T^{B}_{\text{unit}}$).
+  \item The regression verification speedup, $\frac{T^{P}_{\text{sys}}}{T^{P}_{\text{unit}}}$, which is the speedup multiplier offered by the unit tests to validate code changes on a correct codebase.
+
+        It is the ratio of the time it takes for a system test on correct code to run ($T^{P}_{\text{sys}}$) and the time it takes for a unit test on correct code ($T^{P}_{\text{unit}}$).
+
+        % q for next meeting: is this meaningful? considering cache warm ups, etc.
+  \item Carving time, which is the difference between the system test running with ExploTest and without ExploTest.
+
+        It is the ratio of the time to run the program while carving and without carving.
 \end{itemize}
 
 \subsubsection{Answering RQ4}
