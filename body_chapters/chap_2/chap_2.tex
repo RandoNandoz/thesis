@@ -1,31 +1,5 @@
 \chapter{Background}
 
-% \section{Figures}
-
-% \begin{figure}[h]
-%   \begin{center}
-%       \includegraphics[width=0.95\linewidth]{body_chapters/chap_2/figs/little_house_on_the_swiss_prairie.jpg}
-%       \caption[Short Caption to Appear in List of Figures.]{Longer caption to appear in the main body of
-% the text below (or above) the actual figure.}
-%       \label{fig:little_house_on_the_swiss_prairie}
-%   \end{center}
-% \end{figure}
-
-% Figures can be placed with the \textbf{\textbackslash figure} environment. Using the option \textit{h} in
-% the optional arguments is useful to
-% 'lock' figures in the place you want them to, otherwise Latex will place it where it sees fit.
-
-% Use the \textbf{\textbackslash label} command to generate labels; these act as handles which you can refer
-% to in other parts of your work with the
-% \textbf{\textbackslash ref} command.
-
-% Notice the \textbf{short caption} and \textbf{long caption} and in the \textbf{\textbackslash caption}
-% command within the \textbf{\textbackslash
-% figure} environment. The List of Tables/Figures pages will use the short caption while the longer caption
-% appears with the figure.
-
-% \section{Some Section}
-% \lipsum[2]
 
 \section{Unit Test Carving}
 
@@ -53,9 +27,9 @@ common software engineering parlance, the execution of a carved unit test is as 
 
 \begin{itemize}
   \item Restoring $s_{pre} \rightarrow$ test setup; typically found in the fixtures or the
-    \verb|@BeforeEach| part of a unit test.
+        \verb|@BeforeEach| part of a unit test.
   \item Executing $m \rightarrow$ running the function-under-test
-    \item Comparing $s_{m}$ to $s_{post} \rightarrow$ the test oracle; typically assertions like \verb|assertEquals|.
+  \item Comparing $s_{m}$ to $s_{post} \rightarrow$ the test oracle; typically assertions like \verb|assertEquals|.
 \end{itemize}
 
 There are two approaches in capturing $s_{pre}$, explains Elbaum et al.: state-based and action-based.

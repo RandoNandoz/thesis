@@ -1,0 +1,47 @@
+    %  \item [\textbf{RQ1:}] How can we measure the effectiveness of various unit test carving tools?
+    %      \begin{itemize}
+    %          \item Look into existing tools (which we'll need to for the thesis anyways.
+    %          \item How do they evaluate their work?
+    %      \end{itemize}
+    %  \item [\textbf{RQ2:}] What qualities make a program friendly to unit test carving?
+    %      \begin{itemize}
+    %          \item Known unknown...
+    %      \end{itemize}
+    %  \item [\textbf{RQ3:}] What code-level aspects in a program cause ExploTest to fail?
+    %      \begin{itemize}
+    %          \item We know a little, the existence of references to native code.
+    %          \item I.e., unpickable objects
+    %      \end{itemize}
+    %  \item [\textbf{RQ4:}] What kinds of programs do (or do not) ExploTest work on, and why?
+    %      \begin{itemize}
+    %          \item Not sure the answer to this right now??
+    %      \end{itemize}
+    %  \item [\textbf{RQ5:}] What is the process for using ExploTest to localize faults in software?
+    %      \begin{itemize}
+    %          \item Do Zahin's ExploTesting away bugs strategy on all the examples
+    %      \end{itemize}
+    %  \item [\textbf{RQ6:}] How can we improve ExploTest to support more Python programs?
+    %      \begin{itemize}
+    %          \item Slicing?
+    %      \end{itemize}
+    %  \item [\textbf{RQ7:}] Modulo programming language, how does ExploTest differ from other existing unit
+    % test carving tools?
+    %      \begin{itemize}
+    %          \item From Zihao's paper: vs. Fuzzing book carver
+    %          \item vs. MicroTestCarver: @explore is targeted, MTC
+    %              logs all methods
+    %      \end{itemize}
+    % \item [\textbf{RQ8:}] Do occurrences of ExploTest failures occur in code with poor testability?
+    %      \begin{itemize}
+    %          \item What is bad code??
+    %      \end{itemize}
+    %  % \item [\textbf{RQ9:}] Do occurrences of ExploTest failures occur with bugs?
+    %  \item [\textbf{RQ10:}] What types of failure does ExploTest exhibit in its failure cases?
+    %  \item [\textbf{RQ11:}] What amount of speedup do the tests that ExploTest provide compared to the system test?
+    %      \begin{itemize}
+    %          \item Inspired by Zihao's paper
+    %      \end{itemize}
+    %  \item [\textbf{RQ12:}] How much of a performance penalty does running ExploTest provide?
+    %      \begin{itemize}
+    %          \item We need a mode that works on everything
+    %      \end{itemize}
