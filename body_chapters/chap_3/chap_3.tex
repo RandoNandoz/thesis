@@ -30,6 +30,7 @@ We evaluate ExploTest on 22 individual bugs across 12 repositories:
       \centering
       \caption{Repositories used in the evaluation dataset}
       \label{tab:eval_repositories}
+      \renewcommand{\arraystretch}{1.2}
       \begin{tabular}{@{} l l p{8.5cm} @{}}
             \toprule
             \textbf{Project name} & \textbf{Category}    & \textbf{Description}
@@ -97,6 +98,7 @@ code itself. We run the test twice as a rudimentary test for flakiness.
       \caption{Per-bug evaluation results}
       \label{tab:per_bug_results}
       \small
+      \renewcommand{\arraystretch}{1.2}
       % Note: Changed width from \textheight to \linewidth for landscape mode
       \begin{tabularx}{\linewidth}{@{} l l r Y Y Y Y Y @{}}
             \toprule
@@ -162,6 +164,7 @@ code itself. We run the test twice as a rudimentary test for flakiness.
 
 \subsubsection{Preparation}
 For each bug, we will create a new Python virtual environment using the \verb|venv| module.
+
 
 We then install the package and its dependencies as instructed by the documentation of the package, along
 with ExploTest. For seaborn, since the bugs
