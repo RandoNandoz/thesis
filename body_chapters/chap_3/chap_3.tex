@@ -11,15 +11,15 @@ across 12 repositories.
 In selecting bugs, we had a few criteria inspired by Pythoscope's \cite{wiatkowski2011pythoscope} creator:
 
 \begin{enumerate}
-  \item Since Python is a popular and general purpose programming language, we want bugs from various types
-        of Python software.
-  \item Due to design limitations associated with ExploTest, the program with the bug must support Python 3.13.7.
-  \item Each bug must be easy to reproduce with an associated system test.
-  \item Each bug must have an associated function that causes the bug --- i.e., the bug must be detectable by
-        unit testing a function.
-  \item The root cause of the bug must be from the source code itself, not due to platform issues (e.g., a
-        bug in the interpreter or operating system).
-  \item The bug cannot be so severe that the program does not execute or cause other processes to crash.
+      \item Since Python is a popular and general purpose programming language, we want bugs from various types
+            of Python software.
+      \item Due to design limitations associated with ExploTest, the program with the bug must support Python 3.13.7.
+      \item Each bug must be easy to reproduce with an associated system test.
+      \item Each bug must have an associated function that causes the bug --- i.e., the bug must be detectable by
+            unit testing a function.
+      \item The root cause of the bug must be from the source code itself, not due to platform issues (e.g., a
+            bug in the interpreter or operating system).
+      \item The bug cannot be so severe that the program does not execute or cause other processes to crash.
 \end{enumerate}
 
 \label{sec:Dataset}
@@ -27,39 +27,39 @@ In selecting bugs, we had a few criteria inspired by Pythoscope's \cite{wiatkows
 We evaluate ExploTest on 22 individual bugs across 12 repositories:
 
 \begin{table}[H]
-  \centering
-  \caption{Repositories used in the evaluation dataset}
-  \label{tab:eval_repositories}
-  \begin{tabular}{@{} l l p{8.5cm} @{}}
-    \toprule
-    \textbf{Project name} & \textbf{Category}    & \textbf{Description}
-    \\ \midrule
-    \verb|gunicorn|       & Web framework        & HTTP server.
-    \\
-    \verb|click|          & UI library           & Library for creating command-line interfaces.
-    \\
-    \verb|seaborn|        & Data visualization   & Data visualization library.
-    \\
-    \verb|Pygments|       & Source code analysis & Tool for syntax highlighting source code.
-    \\
-    \verb|pylint|         & Source code analysis & Linter for Python code.
-    \\
-    \verb|IPython|        & Meta tooling         & Enhanced interactive Python REPL.
-    \\
-    \verb|httpie|         & Command-line utility & Command-line HTTP client and API testing tool.
-    \\
-    \verb|Tornado|        & Web framework        & Web framework.
-    \\
-    \verb|black|          & Source code analysis & Python source code formatter.
-    \\
-    \verb|sanic|          & Web framework        & Web framework.
-    \\
-    \verb|PySnooper|      & Meta tooling         & Debugging tool that traces function inputs, outputs, and
-    state.                                                                                                  \\
-    \verb|youtube-dl|     & Command-line utility & Command-line tool for downloading videos from online
-    streaming services (e.g., YouTube).                                                                     \\
-    \bottomrule
-  \end{tabular}
+      \centering
+      \caption{Repositories used in the evaluation dataset}
+      \label{tab:eval_repositories}
+      \begin{tabular}{@{} l l p{8.5cm} @{}}
+            \toprule
+            \textbf{Project name} & \textbf{Category}    & \textbf{Description}
+            \\ \midrule
+            \verb|gunicorn|       & Web framework        & HTTP server.
+            \\
+            \verb|click|          & UI library           & Library for creating command-line interfaces.
+            \\
+            \verb|seaborn|        & Data visualization   & Data visualization library.
+            \\
+            \verb|Pygments|       & Source code analysis & Tool for syntax highlighting source code.
+            \\
+            \verb|pylint|         & Source code analysis & Linter for Python code.
+            \\
+            \verb|IPython|        & Meta tooling         & Enhanced interactive Python REPL.
+            \\
+            \verb|httpie|         & Command-line utility & Command-line HTTP client and API testing tool.
+            \\
+            \verb|Tornado|        & Web framework        & Web framework.
+            \\
+            \verb|black|          & Source code analysis & Python source code formatter.
+            \\
+            \verb|sanic|          & Web framework        & Web framework.
+            \\
+            \verb|PySnooper|      & Meta tooling         & Debugging tool that traces function inputs, outputs, and
+            state.                                                                                                  \\
+            \verb|youtube-dl|     & Command-line utility & Command-line tool for downloading videos from online
+            streaming services (e.g., YouTube).                                                                     \\
+            \bottomrule
+      \end{tabular}
 \end{table}
 
 Bugs were selected from the popular BugsInPy bug repository \cite{widyasari2020bugsinpy} and from selected
@@ -91,67 +91,67 @@ source code without any changes to the
 code itself. We run the test twice as a rudimentary test for flakiness.
 
 \begin{table}[p]
-  \centering
-  \caption{Per-bug evaluation results}
-  \label{tab:per_bug_results}
-  \small
-  % Note: Changed width from \textheight to \linewidth for landscape mode
-  \begin{tabularx}{\linewidth}{@{} l l r Y Y Y Y Y @{}}
-    \toprule
-    \textbf{Repo}                &
-    \textbf{ID}                  &
-    \textbf{\# of tests}         &
-    \textbf{Function called}     &
-    \textbf{Output correct}      &
-    \textbf{Oracle created}      &
-    \textbf{Passes on good code} &
-    \textbf{Fails on bad code}                                                       \\
-    \midrule
-    black                        & 12    & 490         & Yes & Yes & No  & N/A & N/A \\
-    black                        & 13    & 3           & Yes & Yes & Yes & Yes & No  \\
-    black                        & 15    & 1           & Yes & Yes & Yes & Yes & No  \\
-    httpie                       & 3     & 1           & Yes & Yes & Yes & Yes & Yes \\
-    PySnooper                    & 2     & 4           & Yes & Yes & Yes & Yes & No  \\
-    PySnooper                    & 3     & 1           & Yes & Yes & Yes & Yes & No  \\
-    sanic                        & 1     & 6           & Yes & Yes & Yes & Yes & No  \\
-    sanic                        & 2     & 0           & N/A & N/A & N/A & N/A & N/A \\
-    sanic                        & 3     & 3           & Yes & Yes & Yes & Yes & Yes \\
-    tornado                      & 10    & 0           & N/A & N/A & N/A & N/A & N/A \\
-    tornado                      & 14    & 2           & Yes & Yes & No  & N/A & N/A \\
-    tornado                      & 15    & 1           & Yes & Yes & Yes & Yes & No  \\
-    tornado                      & 4     & 2           & Yes & Yes & Yes & Yes & No  \\
-    youtube-dl                   & 12    & 0           & N/A & N/A & N/A & N/A & N/A \\
-    click                        & 3071  & 4 P / 4 ARR & Yes & Yes & No  & Yes & No  \\
-    gunicorn                     & 3144  & 0           & N/A & N/A & N/A & N/A & N/A \\
-    ipython                      & 14930 & 0           & N/A & N/A & N/A & N/A & N/A \\
-    pylint                       & 10373 & 1           & Yes & Yes & Yes & Yes & No  \\
-    pylint                       & 10402 & 2           & Yes & Yes & Yes & Yes & No  \\
-    seaborn                      & 3542  & 1           & Yes & Yes & No  & Yes & No  \\
-    seaborn                      & 3553  & 0           & N/A & N/A & N/A & N/A & N/A \\
-    pygments                     & 2382  & 1           & Yes & Yes & Yes & Yes & No  \\
-    \bottomrule
-  \end{tabularx}
+      \centering
+      \caption{Per-bug evaluation results}
+      \label{tab:per_bug_results}
+      \small
+      % Note: Changed width from \textheight to \linewidth for landscape mode
+      \begin{tabularx}{\linewidth}{@{} l l r Y Y Y Y Y @{}}
+            \toprule
+            \textbf{Repo}                &
+            \textbf{ID}                  &
+            \textbf{\# of tests}         &
+            \textbf{Function called}     &
+            \textbf{Output correct}      &
+            \textbf{Oracle created}      &
+            \textbf{Passes on good code} &
+            \textbf{Fails on bad code}                                                       \\
+            \midrule
+            black                        & 12    & 490         & Yes & Yes & No  & N/A & N/A \\
+            black                        & 13    & 3           & Yes & Yes & Yes & Yes & No  \\
+            black                        & 15    & 1           & Yes & Yes & Yes & Yes & No  \\
+            httpie                       & 3     & 1           & Yes & Yes & Yes & Yes & Yes \\
+            PySnooper                    & 2     & 4           & Yes & Yes & Yes & Yes & No  \\
+            PySnooper                    & 3     & 1           & Yes & Yes & Yes & Yes & No  \\
+            sanic                        & 1     & 6           & Yes & Yes & Yes & Yes & No  \\
+            sanic                        & 2     & 0           & N/A & N/A & N/A & N/A & N/A \\
+            sanic                        & 3     & 3           & Yes & Yes & Yes & Yes & Yes \\
+            tornado                      & 10    & 0           & N/A & N/A & N/A & N/A & N/A \\
+            tornado                      & 14    & 2           & Yes & Yes & No  & N/A & N/A \\
+            tornado                      & 15    & 1           & Yes & Yes & Yes & Yes & No  \\
+            tornado                      & 4     & 2           & Yes & Yes & Yes & Yes & No  \\
+            youtube-dl                   & 12    & 0           & N/A & N/A & N/A & N/A & N/A \\
+            click                        & 3071  & 4 P / 4 ARR & Yes & Yes & No  & Yes & No  \\
+            gunicorn                     & 3144  & 0           & N/A & N/A & N/A & N/A & N/A \\
+            ipython                      & 14930 & 0           & N/A & N/A & N/A & N/A & N/A \\
+            pylint                       & 10373 & 1           & Yes & Yes & Yes & Yes & No  \\
+            pylint                       & 10402 & 2           & Yes & Yes & Yes & Yes & No  \\
+            seaborn                      & 3542  & 1           & Yes & Yes & No  & Yes & No  \\
+            seaborn                      & 3553  & 0           & N/A & N/A & N/A & N/A & N/A \\
+            pygments                     & 2382  & 1           & Yes & Yes & Yes & Yes & No  \\
+            \bottomrule
+      \end{tabularx}
 \end{table}
 % \end{landscape}
 
 \subsubsection{Table columns}
 \begin{itemize}
-  \item \textbf{Repo}: The repository the bug originates from.
-  \item \textbf{ID}: For bugs from BugsInPy, the BugsInPy ID that the bug is associated with. For bugs from
-        QuAC, this is the GitHub issue number
-        that the bug is associated with.
-  \item \textbf{\# of tests}: The number of unit tests generated by the tool. The tool can generate $>1$ test
-        when the FUT is exercised more than
-        once by the system test, or if recursive calls occur. $0$ tests are generated when the tool fails to
-        generate any test at all.
-  \item \textbf{Function called}: Does the tool correctly setup the required
-  \item \textbf{Output correct}: Whether the output of the function-under-test exercised by the unit test is
-        equivalent to the system test.
-  \item \textbf{Oracle created}: Whether assertions were created to determine the software functions correctly.
-  \item \textbf{Passes good code}: Whether the assertions pass when running on the correct code (i.e., the
-        code the test was generated on).
-  \item \textbf{Fails on bad code}: Whether the assertions fail when running on the buggy code (i.e., they
-        detect the bug).
+      \item \textbf{Repo}: The repository the bug originates from.
+      \item \textbf{ID}: For bugs from BugsInPy, the BugsInPy ID that the bug is associated with. For bugs from
+            QuAC, this is the GitHub issue number
+            that the bug is associated with.
+      \item \textbf{\# of tests}: The number of unit tests generated by the tool. The tool can generate $>1$ test
+            when the FUT is exercised more than
+            once by the system test, or if recursive calls occur. $0$ tests are generated when the tool fails to
+            generate any test at all.
+      \item \textbf{Function called}: Does the tool correctly setup the required
+      \item \textbf{Output correct}: Whether the output of the function-under-test exercised by the unit test is
+            equivalent to the system test.
+      \item \textbf{Oracle created}: Whether assertions were created to determine the software functions correctly.
+      \item \textbf{Passes good code}: Whether the assertions pass when running on the correct code (i.e., the
+            code the test was generated on).
+      \item \textbf{Fails on bad code}: Whether the assertions fail when running on the buggy code (i.e., they
+            detect the bug).
 \end{itemize}
 
 % flatten structures
@@ -166,10 +166,6 @@ with ExploTest. For seaborn, since the bugs
 appear as plots, we install \verb|jupyter| and \verb|notebook| to work with plots interactively.
 
 \subsubsection{Finding carve target}
-% To evaluate RQ1, we will put the \verb|@explore| at the first public method that exposes the bug. PEP8, the
-% Python style guide Public methods are
-% identified as non-closure functions not starting with an underscore (\verb|_|).
-
 ExploTest uses an \verb|@explore| decorator to mark functions to carve in the source code. By placing the
 decorator, the function is transformed to
 first perform a static analysis of the function's source code (e.g., to get the function name and
@@ -211,27 +207,27 @@ be carvable with our tool.
 
 \subsubsection{Answering RQ1}
 \begin{enumerate}
-  \item Run the non-buggy version of the code and function and observe its output.
+      \item Run the non-buggy version of the code and function and observe its output.
 
-  \item Use the procedure outlined above to place the \verb|@explore| to mark the function-under-test for carving.
+      \item Use the procedure outlined above to place the \verb|@explore| to mark the function-under-test for carving.
 
-  \item Generate the test on the non-buggy version of the code using the system test case:
+      \item Generate the test on the non-buggy version of the code using the system test case:
 
-        Did the tool crash? Were exceptions or errors emitted and what kind?
+            Did the tool crash? Were exceptions or errors emitted and what kind?
 
-  \item If a non-empty file was produced, inspect the file and run the test using a debugger to determine
-        whether the FUT was reached. Observe the
-        output of the function from the generated the unit test against the output of the system test. If they
-        are the same, we can consider the FUT to
-        be exercised.
+      \item If a non-empty file was produced, inspect the file and run the test using a debugger to determine
+            whether the FUT was reached. Observe the
+            output of the function from the generated the unit test against the output of the system test. If they
+            are the same, we can consider the FUT to
+            be exercised.
 
-  \item When running the test, we can observe whether the test passes on the non-buggy code. If it passes, we
-        move and apply the buggy commits. If
-        the test fails on the source it was generated on, we note it down and skip the next step.
+      \item When running the test, we can observe whether the test passes on the non-buggy code. If it passes, we
+            move and apply the buggy commits. If
+            the test fails on the source it was generated on, we note it down and skip the next step.
 
-  \item We then run the test, generated on the non-buggy code on the buggy version of the codebase. The test
-        should not pass, and if it does, we
-        consider the oracle defective.
+      \item We then run the test, generated on the non-buggy code on the buggy version of the codebase. The test
+            should not pass, and if it does, we
+            consider the oracle defective.
 \end{enumerate}
 
 This procedure should allow us to bucket each created test by the table, and facilitate discussion of failure cases.
@@ -247,25 +243,25 @@ mentioned in section 3.2. We calculate and
 discuss three metrics:
 
 \begin{itemize}
-  \item The bug detection speedup, $\frac{T^{B}_{\text{sys}}}{T^{B}_{\text{unit}}}$, which is the speedup
-        multiplier offered by the unit test to
-        catch buggy code.
+      \item The bug detection speedup, $\frac{T^{B}_{\text{sys}}}{T^{B}_{\text{unit}}}$, which is the speedup
+            multiplier offered by the unit test to
+            catch buggy code.
 
-        It is the ratio of the time it takes for a system test on buggy code to run ($T^{B}_{\text{sys}}$) and
-        the time it takes for a unit test on buggy
-        code ($T^{B}_{\text{unit}}$).
-  \item The regression verification speedup, $\frac{T^{P}_{\text{sys}}}{T^{P}_{\text{unit}}}$, which is the
-        speedup multiplier offered by the unit
-        tests to validate code changes on a correct codebase.
+            It is the ratio of the time it takes for a system test on buggy code to run ($T^{B}_{\text{sys}}$) and
+            the time it takes for a unit test on buggy
+            code ($T^{B}_{\text{unit}}$).
+      \item The regression verification speedup, $\frac{T^{P}_{\text{sys}}}{T^{P}_{\text{unit}}}$, which is the
+            speedup multiplier offered by the unit
+            tests to validate code changes on a correct codebase.
 
-        It is the ratio of the time it takes for a system test on correct code to run ($T^{P}_{\text{sys}}$) and
-        the time it takes for a unit test on
-        correct code ($T^{P}_{\text{unit}}$).
+            It is the ratio of the time it takes for a system test on correct code to run ($T^{P}_{\text{sys}}$) and
+            the time it takes for a unit test on
+            correct code ($T^{P}_{\text{unit}}$).
 
-        % q for next meeting: is this meaningful? considering cache warm ups, etc.
-  \item Carving time, which is the difference between the system test running with ExploTest and without ExploTest.
+            % q for next meeting: is this meaningful? considering cache warm ups, etc.
+      \item Carving time, which is the difference between the system test running with ExploTest and without ExploTest.
 
-        It is the ratio of the time to run the program while carving and without carving.
+            It is the ratio of the time to run the program while carving and without carving.
 \end{itemize}
 
 \subsubsection{Answering RQ4}

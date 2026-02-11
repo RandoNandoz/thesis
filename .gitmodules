@@ -1,0 +1,3 @@
+[submodule "thesis-artifacts"]
+	path = thesis-artifacts
+	url = https://github.com/RandoNandoz/thesis-artifacts.git
