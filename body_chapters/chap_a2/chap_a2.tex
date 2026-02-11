@@ -1,1 +1,41 @@
-% \chapter{Name of Second Appendix}
+\chapter{Links to bugs we evaluated}
+
+\begin{table}[h!]
+    \centering
+    \caption{Bug dataset with commit and issue information}
+    \label{tab:bug_dataset}
+    \footnotesize
+    \renewcommand{\arraystretch}{0.85}
+    \begin{tabularx}{\linewidth}{@{} l l l l l @{}}
+        \toprule
+        \textbf{Repo}         &
+        \textbf{ID}           &
+        \textbf{Buggy Commit} &
+        \textbf{Fixed Commit} &
+        \textbf{Issue ID}                                                                                                   \\
+        \midrule
+        black                 & 12    & 8b340e & b53cb9 & \href{https://github.com/psf/black/issues/468}{468}               \\
+        black                 & 13    & 0a340e & 883689 & \href{https://github.com/psf/black/issues/125}{125}               \\
+        black                 & 15    & 8a8c58 & df2ae3 & \href{https://github.com/psf/black/issues/335}{335}               \\
+        httpie                & 3     & 8c33e5 & 589887 & \href{https://github.com/httpie/cli/issues/412}{412}              \\
+        PySnooper             & 2     & 81868c & 814abc & \href{https://github.com/cool-RR/PySnooper/issues/144}{144}       \\
+        PySnooper             & 3     & 6e3d79 & 15555e & \href{https://github.com/cool-RR/PySnooper/issues/2}{2}           \\
+        sanic                 & 1     & e7001b & 449731 & \href{https://github.com/sanic-org/sanic/issues/1847}{1847}       \\
+        sanic                 & 2     & ba9b43 & 801595 & \href{https://github.com/sanic-org/sanic/issues/1754}{1754}       \\
+        sanic                 & 3     & 91f6ab & 861e87 & \href{https://github.com/sanic-org/sanic/issues/1788}{1788}       \\
+        tornado               & 10    & ecd896 & 5931d9 & \href{https://github.com/tornadoweb/tornado/issues/2010}{2010}    \\
+        tornado               & 14    & 81ee31 & 1d02ed & \href{https://github.com/tornadoweb/tornado/issues/1469}{1469}    \\
+        tornado               & 15    & fdfaf3 & ecb3ea & \href{https://github.com/tornadoweb/tornado/pull/3170}{3170*}     \\
+        tornado               & 4     & a8420f & db5290 & \href{https://github.com/tornadoweb/tornado/issues/2521}{2521}    \\
+        youtube-dl            & 12    & 435e38 & e118a8 & \href{https://github.com/ytdl-org/youtube-dl/issues/18961}{18961} \\
+        click                 & 3071  & 00fadb & 1d038f & \href{https://github.com/pallets/click/issues/3071}{3071}         \\
+        gunicorn              & 3144  & 547f85 & 70a1e4 & \href{https://github.com/benoitc/gunicorn/issues/3144}{3144}      \\
+        ipython               & 14930 & 557b8b & 1e9a2e & \href{https://github.com/ipython/ipython/issues/14930}{14930}     \\
+        pylint                & 10373 & f798a4 & 98942b & \href{https://github.com/pylint-dev/pylint/issues/10373}{10373}   \\
+        pylint                & 10402 & f798a4 & 98942b & \href{https://github.com/pylint-dev/pylint/issues/10402}{10402}   \\
+        seaborn               & 3542  & f2abeb & d00a27 & \href{https://github.com/mwaskom/seaborn/issues/3542}{3542}       \\
+        seaborn               & 3553  & f2abeb & d00a27 & \href{https://github.com/mwaskom/seaborn/issues/3553}{3553}       \\
+        pygments              & 2382  & 77a939 & 6c187a & \href{https://github.com/pygments/pygments/issues/2382}{2382}     \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
