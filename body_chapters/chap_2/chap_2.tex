@@ -34,7 +34,7 @@ common software engineering parlance, the execution of a carved unit test is as 
 
 There are two approaches in capturing $s_{pre}$, explains Elbaum et al.: state-based and action-based.
 
-State-based capture involves saving $s_{pre}$, typically serializing $s_{pre}$ to disk, then de-serializing
+State-based capture involves saving $s_{pre}$, typically serializing $s_{pre}$ to disk, then deserializing
 it to restore $s_{pre}$. ExploTest
 implements this in its pickle-mode. This comes with certain challenges which we will describe later in this
 thesis. The majority (TODO: CHECK IF THIS
@@ -66,19 +66,19 @@ tests as code evolves, worsening the evolution issue.
 MicroTestCarver by Deljouyi and Zaidman \cite{deljouyi2023generating} tries to remedy this issue in their
 work by serializing to XML, a
 human-editable file format using the XStream library, however, there is no similar library that produces any
-kind of human readable serialization
+kind of human-readable serialization
 output in Python.
 
 \subsubsection{Non-serializable Objects}
 
 There are objects that cannot be serialized, which typically have ill-defined representations after
-de-serialization. Currently, the most robust
-Python serialization library which we elected to use, dill \cite{dilldocs} do not support generator,
-traceback, and code frame objects. Code frame
+deserialization. Currently, the most robust
+Python serialization library which we elected to use, dill \cite{dilldocs} do not support \verb|generator|,
+\verb|traceback|, and code frame objects. Code frame
 objects cannot be captured by state-based capture, as the creation of a code frame object entails the
 creation of native code objects which cannot be
 done without some action-based capture. Similarly, network sockets and active network connections do not have
-a meaningful value when de-serialized,
+a meaningful value when deserialized,
 as the server they connect has likely since closed the connection. Finally, objects which explicitly reject
 serialization by disabling
 \verb|__reduce__| cannot be serialized. This family of objects necessitates the use of action-based capture.

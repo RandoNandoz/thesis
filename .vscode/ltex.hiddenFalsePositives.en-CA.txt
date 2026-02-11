@@ -1,0 +1,6 @@
+{"rule":"AGREEMENT_SENT_START","sentence":"^\\QThis presents challenges to action-based capture, as existing action-based capture unit test carving tools like ARTISAN \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q assume that the shape of an object does not change, and can assume the object\\E$"}
+{"rule":"ENGLISH_WORD_REPEAT_RULE","sentence":"^\\Q\\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q UI library Library for creating command-line interfaces.\\E$"}
+{"rule":"PHRASE_REPETITION","sentence":"^\\Q\\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q Data visualization Data visualization library.\\E$"}
+{"rule":"PHRASE_REPETITION","sentence":"^\\Q\\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q Web framework Web framework.\\E$"}
+{"rule":"EN_A_VS_AN","sentence":"^\\QThe evaluation takes place on an x8664 computer running Ubuntu 24.04.3.\\E$"}
+{"rule":"NEEDS_FIXED","sentence":"^\\QFunction called: Does the tool correctly setup the required Output correct: Whether the output of the function-under-test exercised by the unit test is equivalent to the system test.\\E$"}
