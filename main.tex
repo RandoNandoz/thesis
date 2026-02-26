@@ -34,10 +34,13 @@ linkcolor=blue]{hyperref}
 \usepackage{parskip}
 \usepackage{booktabs}
 \usepackage{tabularx}
+\usepackage{minted}
+\usepackage[normalem]{ulem}
 \usepackage{float}
-
 % This package is for generating the dummy text you'll see on some pages.
 \usepackage{lipsum}
+
+\usepackage{palatino}  % Latin Modern, the modern version of Computer Modern
 
 % New command for the Examining Committee Page
 \newcommand{\committeeMember}[4]{#1, #2, #3\\\textit{#4}}
@@ -160,6 +163,7 @@ linkcolor=blue]{hyperref}
 \include{body_chapters/chap_2/chap_2}
 \include{body_chapters/chap_3/chap_3}
 \include{body_chapters/chap_4/chap_4}
+\include{body_chapters/chap_5/chap_5}
 
 % Insert the bibliography
 \bibliographystyle{ACM-Reference-Format} % We choose the "unsrt" reference style
@@ -173,5 +177,6 @@ linkcolor=blue]{hyperref}
 \include{body_chapters/chap_a1/chap_a1}
 \include{body_chapters/chap_a2/chap_a2}
 \include{body_chapters/chap_a3/chap_a3}
+\include{body_chapters/chap_a4/chap_a4}
 
 \end{document}

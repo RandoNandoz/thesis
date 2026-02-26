@@ -1,2 +1,184 @@
-\chapter{Case studies of bugs used in evaluation}
-\label{chap:app1}
+\chapter{Case studies of bugs and generated tests used in evaluation}
+
+\section{Tests and functions-under-test in the ``uncovers bug'' category}
+
+These tests are able to fully expose bugs in their functions-under-test. They have fully-functional oracles,
+and can correctly set up and call the function-under-test.
+
+Some renaming and elision of unimportant data has been done for the sake of readability.
+
+\subsection{httpie, bug \#3}
+\label{sec:httpie-fully-functional-ut}
+
+\subsubsection{Generated unit test}
+\begin{verbatim}
+import os
+import dill
+import pytest
+from httpie import sessions
+
+
+@pytest.fixture(autouse=True)
+def mock_setup():
+    import os
+
+    os.environ["RUNNING_GENERATED_TEST"] = "true"
+
+
+@pytest.fixture
+def generate_self():
+    self = {
+        "headers": {},
+        "cookies": {
+            "AEC": {
+                "expires": 1784594863,
+                "path": "/",
+                "secure": True,
+                "value": "AaJma5sHy...",
+            },
+            "NID": {
+                "expires": 1784851905,
+                "path": "/",
+                "secure": False,
+                "value": "528=Udfh...",
+            },
+            "__Secure-STRP": {
+                "expires": 1769043163,
+                "path": "/",
+                "secure": True,
+                "value": "AD6DogubTSu...",
+            },
+        },
+        "auth": {"password": None, "type": None, "username": None},
+        "__meta__": {
+            "about": "HTTPie session file",
+            "help": "https://github.com/jkbrzt/httpie#sessions",
+            "httpie": "1.0.0-dev",
+        },
+    }
+    return self
+
+
+@pytest.fixture
+def generate_request_headers():
+    with open(
+        "...",
+        "rb",
+    ) as f:
+        request_headers = dill.loads(f.read())
+    return request_headers
+
+
+def test_Session_update_headers(generate_self,
+                                generate_request_headers):
+    self = generate_self
+    request_headers = generate_request_headers
+    return_value = sessions.Session.update_headers(self, request_headers)
+    assert return_value is None
+
+\end{verbatim}
+
+\subsubsection{Function-under-test}
+
+\begin{verbatim}
+def update_headers(self, request_headers):
+    """
+    Update the session headers with the request ones while ignoring
+    certain name prefixes.
+
+    :type request_headers: dict
+
+    """
+    for name, value in request_headers.items():
+
+        # this None-check is not present in the buggy version,
+        # causing the crash, which consequently causes the generated
+        # test to fail.
+        if value is None:
+            continue  # Ignore explicitely unset headers
+
+        value = value.decode('utf8')
+        if name == 'User-Agent' and value.startswith('HTTPie/'):
+            continue
+
+        for prefix in SESSION_IGNORED_HEADER_PREFIXES:
+            if name.lower().startswith(prefix.lower()):
+                break
+        else:
+            self['headers'][name] = value
+\end{verbatim}
+
+
+\label{sec:sanic-fully-functional-ut}
+
+\subsection{sanic, bug \#3}
+
+\subsubsection{Generated unit test}
+\begin{verbatim}
+@pytest.fixture
+def gen_self():
+    # note: serialization path has been elided
+    with open('...', 'rb') as f:
+        self = dill.loads(f.read())
+    return self
+
+@pytest.fixture
+def gen_view_name():
+    view_name = 'bp_app.external'
+    return view_name
+
+@pytest.fixture
+def gen_kwargs():
+    kwargs = {'_external': True}
+    return kwargs
+
+@pytest.fixture
+def gen_saved_return_value():
+    saved_return_value = 'http://bp.example.com/external'
+    return saved_return_value
+
+def test_Sanic_url_for(gen_self, gen_view_name,
+                       gen_kwargs, gen_saved_return_value):
+
+    self = gen_self
+    view_name = gen_view_name
+    kwargs = gen_kwargs
+    saved_return_value = gen_saved_return_value
+    return_value = app.Sanic.url_for(self, view_name, **kwargs)
+    assert return_value == saved_return_value
+\end{verbatim}
+
+
+\subsubsection{Function-under-test}
+
+\begin{verbatim}
+def url_for(self, view_name: str, **kwargs):
+    kw: Dict[str, str] = {}
+
+    uri, route = self.router.find_route_by_view_name(view_name, **kw)
+
+    host = uri.find("/")
+    host, uri = uri[:host], uri[host:]
+
+    out = uri
+
+    matched_params = re.findall(self.router.parameter_pattern, uri)
+
+    kwargs.pop("_method", None)
+    anchor = kwargs.pop("_anchor", "")
+
+    external = kwargs.pop("_external", False)
+    scheme = kwargs.pop("_scheme", "")
+    if scheme and not external:
+        raise ValueError("When specifying _scheme, _external must be True")
+
+    scheme = "http"
+
+    query_string = urlencode(kwargs, doseq=True) if kwargs else ""
+    out = urlunparse((scheme, netloc, out, "", query_string, anchor))
+
+    return out
+\end{verbatim}
+
+\section{Tests and functions-under-test in the ``exercises function'' category}
+\section{Tests and functions-under test in the ``defective'' category}
