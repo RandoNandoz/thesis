@@ -51,24 +51,14 @@ assertions will follow in section 5.
 
 \subsection{RQ2: Unit test viability by software attributes and family}
 
-RQ2 poses the question: \textit{What software families and attributes are associated with the differing viabilities
+RQ2 poses the question: \textit{What software attributes and family are associated with the differing viabilities
     of unit tests created by the tool?}
 
-Differing viabilities are classified as follows:
+\subsubsection{What attributes contribute to ExploTest's ability to create a valid unit test from a carve target and an integration test?}
 
-\begin{itemize}
-    \item Defective --- the function was either not called, or called but produced a result that differs from the system test.
-          There are 8 runs in this category.
-    \item Exercises function --- the function was called by the unit test, and its output was the same as the system test.
-          There are 14 runs in this category.
-    \item Uncovers bug --- the unit test is able to exercise the function, and can uncover the bug in the buggy version of
-          the repository with its oracle. This category is a subset of the ``exercises function'' category.
-          There are 2 runs of the test in this category.
-\end{itemize}
+Looking at our tests and function-under-tests, we can gather some patterns. Particularly, we'll study the two tests
+that are able to fully catch bugs, however these patterns are consistent throughout all our successful runs.
 
-\subsubsection{Tests which can uncover bugs}
-First, we discuss the excellent. What attributes of the function-under-test and codebase contribute are associated with
-the tool creating a test that falls into the ``uncovers bug'' category?
 
 Observe the test generated when run on the \verb|update_headers| procedure from \verb|httpie|
 in \hyperref[sec:httpie-fully-functional-ut]{A.1}. The test is able to detect the bug since in
@@ -80,36 +70,20 @@ has similar attributes to the first. The function-under-test, \verb|url_for|'s o
 regular expression library and the \verb|urlencode|, \verb|urldecode| functions from \verb|urllib| library which do not require
 any previous state to be set up for them.
 
-We note a few things from the two tests that uncover bugs:
-
 \begin{itemize}
     \item The function-under-test has limited external dependencies for it to function.
     \item The function-under-test's external dependencies do not require their states to be set; they
           are stateless, or the default state is sufficient.
-    \item Every type used in the function-under-test is serializable. The \verb|request_headers|
-          parameter is a dictionary of strings and bytes, which are both serializable.
-    \item Even with weak test oracles like ~\verb|assert return_value is None| can catch bugs, since
-          crash oracles exist.
-\end{itemize}
 
-\subsubsection{Tests which can exercise their target function-under-tests}
-We'll discuss common patterns in ExploTest runs that successfully create a unit test, but cannot
-detect the bug.
-
-Looking at our 14 runs in this category, we can make a few observations:
-
-\begin{itemize}
     \item Target function-under-tests have serializable parameters. This is unsurprising, considering
           the tool uses record-and-replay techniques to carve its tests.
-    \item Carve candidates have clearly defined entry-points.
+    \item Carve candidates have clearly defined entrypoints, and are reachable in the call graph.
+    \item Every type used in the function-under-test is serializable. The \verb|request_headers|
+          parameter is a dictionary of strings and bytes, which are both serializable.
 \end{itemize}
 
 
-\subsubsection{Defective tests}
-
-\textbf{Defect: No test generated}
-
-\textbf{Defect: Test generated, FUT not correctly exercised}
+\subsubsection{What attributes contribute to ExploTest's ability to create oracles that are able to detect bugs?}
 
 
 \subsubsection{Viability by software family}
@@ -117,15 +91,36 @@ Looking at our 14 runs in this category, we can make a few observations:
 We aggregate the ratio of successful tests by software category in \hyperref[sec:RQ2Results]{Table D.1}. The Data visualization,
 Command line utility, and Web framework categories are discarded since there is not enough data to draw a meaningful analysis.
 
+Most categories are within the 64\% range. Notably, source code analysis tools work well with ExploTest; we suspect source code
+analysis tools work well as they do not interface with native code, but instead operate on simple, tree like structures. Other results
+are not notable enough to discuss.
+
+
+
+% It appears that web frameworks have a lower ability to reach their function-under-test (62.5\% rate of success vs. 64).
+
+% We suspect this is due to frameworks tend to require interfacing with native code with event loops, and socket I/O.
+% In those web framework repositories where we were able to locate a carve target but was unable to carve a test, all the failures came from \verb|frame| or
+% code objects (i.e., pointers to native code) that could not be serialized.
 % tldr, lol
 \subsubsection{RQ Answer}
 
+\noindent\fbox{%
+    \parbox{\textwidth}{%
+        RQ2 Answer:
+        \textbf{67}
+    }%
+}
 
 
 
 
-\subsection{RQ3: \textit{What is the amount of speedup offered by the unit tests created by the tool compared to
-        their system test runs?}}
+\subsection{RQ3: \textit{Speedup over integration tests}}
+
+For RQ3, we asked ``What is the amount of speedup offered by the unit tests created by the tool
+compared to their system test runs?''.
+
+
 
 \subsection{RQ4: \textit{What modes of failure occur when the tool fails to create any kind of unit test?}}
 

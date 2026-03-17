@@ -1,0 +1,155 @@
+\chapter{Performance evaluation tables}
+
+We calculate four different speedups and perform the Mann-Whitney U test with the alternative hypothesis
+being that the time taken by the unit test (whether that be real or simulated execution) is less
+than the time taken the system test.
+
+\section{Speedup of unit test over system test}
+
+\begin{table}[p]
+    \centering
+    \caption{Buggy: execution time speedup}
+    \label{tab:buggy_exec}
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{\linewidth}{@{} >{\raggedright\arraybackslash}X r r r r @{}}
+        \toprule
+        \textbf{Repo} & \textbf{ID} & \textbf{Exec Speedup} & \textbf{$U$} & \textbf{$p$-value} \\
+        \midrule
+        PySnooper     & 2           & $<$ noise floor       & ---          & ---                \\
+        PySnooper     & 3           & $<$ noise floor       & ---          & ---                \\
+        black         & 12          & 0.01$\times$          & 10,000       & 1.000              \\
+        black         & 13          & 63.48$\times$         & 521          & $<$0.001           \\
+        black         & 15          & $<$ noise floor       & ---          & ---                \\
+        httpie        & 3           & 12.27$\times$         & 1,868        & $<$0.001           \\
+        pygments      & 2382        & 28.35$\times$         & 0            & $<$0.001           \\
+        pylint        & 10373       & $<$ noise floor       & ---          & ---                \\
+        pylint        & 10402       & $<$ noise floor       & ---          & ---                \\
+        sanic         & 1           & 206.41$\times$        & 0            & $<$0.001           \\
+        sanic         & 3           & 40.89$\times$         & 0            & $<$0.001           \\
+        seaborn       & 3542        & 8.77$\times$          & 0            & $<$0.001           \\
+        tornado       & 14          & 3.51$\times$          & 692          & $<$0.001           \\
+        tornado       & 15          & 99.85$\times$         & 0            & $<$0.001           \\
+        tornado       & 4           & 16.16$\times$         & 0            & $<$0.001           \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\begin{table}[p]
+    \centering
+    \caption{Buggy: real time speedup}
+    \label{tab:buggy_real}
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{\linewidth}{@{} >{\raggedright\arraybackslash}X r r r r @{}}
+        \toprule
+        \textbf{Repo} & \textbf{ID} & \textbf{Real Speedup} & \textbf{$U$} & \textbf{$p$-value} \\
+        \midrule
+        PySnooper     & 2           & 0.30$\times$          & 10,000       & 1.000              \\
+        PySnooper     & 3           & 0.39$\times$          & 10,000       & 1.000              \\
+        black         & 12          & 0.01$\times$          & 10,000       & 1.000              \\
+        black         & 13          & 0.69$\times$          & 9,461        & 1.000              \\
+        black         & 15          & 0.53$\times$          & 9,900        & 1.000              \\
+        httpie        & 3           & 0.10$\times$          & 10,000       & 1.000              \\
+        pygments      & 2382        & 0.90$\times$          & 6,131        & 0.997              \\
+        pylint        & 10373       & 0.95$\times$          & 7,676        & 1.000              \\
+        pylint        & 10402       & 1.18$\times$          & 112          & $<$0.001           \\
+        sanic         & 1           & 6.56$\times$          & 0            & $<$0.001           \\
+        sanic         & 3           & 2.57$\times$          & 0            & $<$0.001           \\
+        seaborn       & 3542        & 0.90$\times$          & 7,951        & 1.000              \\
+        tornado       & 14          & 0.36$\times$          & 10,000       & 1.000              \\
+        tornado       & 15          & 4.97$\times$          & 0            & $<$0.001           \\
+        tornado       & 4           & 2.93$\times$          & 0            & $<$0.001           \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\begin{table}[p]
+    \centering
+    \caption{Regression: execution time speedup}
+    \label{tab:regression_exec}
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{\linewidth}{@{} >{\raggedright\arraybackslash}X r r r r @{}}
+        \toprule
+        \textbf{Repo} & \textbf{ID} & \textbf{Exec Speedup} & \textbf{$U$} & \textbf{$p$-value} \\
+        \midrule
+        PySnooper     & 2           & 3.29$\times$          & 1,100        & $<$0.001           \\
+        PySnooper     & 3           & 33.58$\times$         & 16           & $<$0.001           \\
+        black         & 12          & 0.08$\times$          & 8,167        & 1.000              \\
+        black         & 13          & $<$ noise floor       & ---          & ---                \\
+        black         & 15          & 14.17$\times$         & 372          & $<$0.001           \\
+        httpie        & 3           & 1.66$\times$          & 4,320        & 0.048              \\
+        pygments      & 2382        & 16.41$\times$         & 59           & $<$0.001           \\
+        pylint        & 10373       & 1.10$\times$          & 2,116        & $<$0.001           \\
+        pylint        & 10402       & 1.62$\times$          & 149          & $<$0.001           \\
+        sanic         & 1           & 151.85$\times$        & 0            & $<$0.001           \\
+        sanic         & 3           & 118.81$\times$        & 0            & $<$0.001           \\
+        seaborn       & 3542        & 3.71$\times$          & 0            & $<$0.001           \\
+        tornado       & 14          & 663.31$\times$        & 0            & $<$0.001           \\
+        tornado       & 15          & 271.51$\times$        & 0            & $<$0.001           \\
+        tornado       & 4           & $<$ noise floor       & ---          & ---                \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\begin{table}[p]
+    \centering
+    \caption{Regression: real time speedup}
+    \label{tab:regression_real}
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{\linewidth}{@{} >{\raggedright\arraybackslash}X r r r r @{}}
+        \toprule
+        \textbf{Repo} & \textbf{ID} & \textbf{Real Speedup} & \textbf{$U$} & \textbf{$p$-value} \\
+        \midrule
+        PySnooper     & 2           & 0.39$\times$          & 10,000       & 1.000              \\
+        PySnooper     & 3           & 0.39$\times$          & 10,000       & 1.000              \\
+        black         & 12          & 0.01$\times$          & 10,000       & 1.000              \\
+        black         & 13          & 0.69$\times$          & 8,555        & 1.000              \\
+        black         & 15          & 0.53$\times$          & 9,900        & 1.000              \\
+        httpie        & 3           & 0.07$\times$          & 10,000       & 1.000              \\
+        pygments      & 2382        & 0.39$\times$          & 10,000       & 1.000              \\
+        pylint        & 10373       & 0.56$\times$          & 10,000       & 1.000              \\
+        pylint        & 10402       & 0.71$\times$          & 9,949        & 1.000              \\
+        sanic         & 1           & 6.56$\times$          & 0            & $<$0.001           \\
+        sanic         & 3           & 2.92$\times$          & 0            & $<$0.001           \\
+        seaborn       & 3542        & 0.62$\times$          & 10,000       & 1.000              \\
+        tornado       & 14          & 139.76$\times$        & 0            & $<$0.001           \\
+        tornado       & 15          & 4.97$\times$          & 0            & $<$0.001           \\
+        tornado       & 4           & 4.95$\times$          & 0            & $<$0.001           \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\clearpage
+\section{Carving Overhead}
+
+\begin{table}[p]
+    \centering
+    \caption{Carving overhead: median custom runner time with vs.\ without carving}
+    \label{tab:carving_overhead}
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{\linewidth}{@{} >{\raggedright\arraybackslash}X r r r r r r @{}}
+        \toprule
+        \textbf{Repo} & \textbf{ID} & \textbf{Without (ms)} & \textbf{With (ms)} & \textbf{Slowdown} & \textbf{$U$} & \textbf{$p$-value} \\
+        \midrule
+        PySnooper     & 2           & 32.1                  & 64.0               & 1.99$\times$      & 8,185        & $<$0.001           \\
+        PySnooper     & 3           & 63.9                  & 64.8               & 1.02$\times$      & 8,948        & $<$0.001           \\
+        black         & 12          & 114.2                 & 114.1              & 1.00$\times$      & 3,233        & $<$0.001           \\
+        black         & 13          & 114.1                 & 164.2              & 1.44$\times$      & 8,139        & $<$0.001           \\
+        black         & 15          & 465.5                 & 514.8              & 1.00$\times$      & 4,982        & 0.966              \\
+        httpie        & 3           & 63.8                  & 32.0               & 1.00$\times$      & 4,977        & 0.956              \\
+        pygments      & 2382        & 64.2                  & 114.2              & 1.78$\times$      & 8,261        & $<$0.001           \\
+        pylint        & 10373       & 315.2                 & 315.3              & 1.00$\times$      & 5,107        & 0.795              \\
+        pylint        & 10402       & 415.1                 & 2773.6             & 6.91$\times$      & 10,000       & $<$0.001           \\
+        sanic         & 1           & 2070.3                & 2069.6             & 1.00$\times$      & 203          & $<$0.001           \\
+        sanic         & 3           & 1067.1                & 1067.0             & 1.00$\times$      & 475          & 0.717              \\
+        seaborn       & 3542        & 866.5                 & 1118.0             & 1.29$\times$      & 8,747        & $<$0.001           \\
+        tornado       & 14          & 30001.0               & 30000.6            & 1.00$\times$      & 1            & 0.016              \\
+        tornado       & 15          & 1066.9                & 1066.6             & 1.00$\times$      & 325          & 0.066              \\
+        tornado       & 4           & 1066.6                & 1067.0             & 1.00$\times$      & 611          & 0.018              \\
+        \bottomrule
+    \end{tabularx}
+\end{table}

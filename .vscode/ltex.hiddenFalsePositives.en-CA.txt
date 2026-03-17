@@ -4,3 +4,4 @@
 {"rule":"PHRASE_REPETITION","sentence":"^\\Q\\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q Web framework Web framework.\\E$"}
 {"rule":"EN_A_VS_AN","sentence":"^\\QThe evaluation takes place on an x8664 computer running Ubuntu 24.04.3.\\E$"}
 {"rule":"NEEDS_FIXED","sentence":"^\\QFunction called: Does the tool correctly setup the required Output correct: Whether the output of the function-under-test exercised by the unit test is equivalent to the system test.\\E$"}
+{"rule":"A_INFINITIVE","sentence":"^\\QIn those web framework repos, where we were able to locate a carve target but was unable to carve a test, all the failures came from \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q or code objects (i.e., pointers to native code) that could not be serialized.\\E$"}
