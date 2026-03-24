@@ -152,6 +152,63 @@ are not notable enough to discuss.
 For RQ3, we asked ``What is the amount of speedup offered by the unit tests created by the tool
 compared to their system test runs?''.
 
+The appendix section \hyperref[sec:speedup-data]{E.1} contains the data desired in section \hyperref[sec:answering-rq3]{3.3.3}.
+An analysis of the data follows to answer RQ3.
+
+\subsubsection{Real speedups}
+Let us first discuss the real speedups for both non-buggy and buggy cases.
+
+Real speedups are limited for the non-buggy and buggy cases. The median real speedup over both non-buggy and buggy cases offered by the tool is
+$0.9 \times$, which is actually a slowdown.
+
+Only 5 test suites generated (pylint-10402, sanic-1, sanic-3, tornado-15, and tornado-4)
+by the tool offer a statistically significant speedup. In these cases, we find the collection time significantly dominates the execution
+time of the tests. Furthermore, the collection time must also be greater than the system test run time. This makes sense, since
+many of our system tests are minimum reproducible examples from bug reports, which do not exercise a significant amount of the system.
+
+This invites the question: is there a relationship between real speedup and the system test time?
+
+To answer the question, we perform a simple linear regression, shown in Figure~\ref{fig:real_speedup_plot}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.80]{plots/plots_regression_real.png}
+    \caption{Regression analysis for mean system test time and speedup}
+    \label{fig:real_speedup_plot}
+\end{figure}
+
+We do observe a statistically significant and strong linear relationship between the system test time and real speedup ($R^2 = 0.849, p < 0.001$).
+
+This is consistent with our understanding of the underlying benchmark suite, namely, tornado and sanic, the two code bases that exhibit
+a speedup are both web frameworks, and their underlying system test benchmark involves \verb|curl|ing an endpoint, which imposes
+a significant overhead due to network requests having extra overhead through the operating system space network stack.
+
+From this analysis, we can infer that ExploTest, and other similar unit test carving tools only create a meaningful speedup against system test
+when the system test are already quite expensive.
+
+\subsubsection{Execution speedups}
+Since our arbitrary choice of unit test library imposes a significant overhead when in its collection pass, we invent a new metric,
+the execution speedup, which is the total unit test execution time minus the collection time. One can think of this as the speedup
+we would have had if we had chosen to use the stock Python \verb|unittest| library instead of the PyTest library, since the \verb|unittest|
+library does not perform an expensive collection pass by default. Earlier versions of ExploTest targeted the \verb|unittest| library
+instead of PyTest, and an analysis by Zihao Huang, the original creator of the tool found similar speedups.
+
+\centering{\includegraphics[scale=0.80]{plots/plots_regression_exec.png}}
+
+\subsubsection{Real and execution speedups: Non-buggy vs buggy}
+
+Another
+
+\subsubsection{Carving overhead}
+
+
+\subsubsection{RQ Answer}
+
+\noindent\fbox{%
+    \parbox{\textwidth}{%
+        RQ3 Answer:
+    }%
+}
 
 
 \subsection{RQ4: \textit{What modes of failure occur when the tool fails to create any kind of unit test?}}
