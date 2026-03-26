@@ -72,7 +72,7 @@ output in Python.
 
 There are objects that cannot be serialized, which typically have ill-defined representations after
 deserialization. Currently, the most robust
-Python serialization library which we elected to use, dill \cite{dilldocs} do not support \verb|generator|,
+Python serialization library which we elected to use, dill \cite{dilldocs} does not support \verb|generator|,
 \verb|traceback|, and code frame objects. Code frame
 objects cannot be captured by state-based capture, as the creation of a code frame object entails the
 creation of native code objects which cannot be
@@ -87,7 +87,7 @@ serialization by disabling
 \subsubsection{The Object Creation Problem}
 The Object Creation Problem, defined by Bach et al. \cite{bach2020determining}, is the problem of finding the
 correct sequences of method calls to
-construct an object. In Python, creating is objects is not always as simple as calling the \verb|__init__|
+construct an object. In Python, creating objects is not always as simple as calling the \verb|__init__|
 constructor, instead, objects rely on
 hierarchies and overridden \verb|__new__|, or other classes like in the factory design pattern.
 
@@ -126,24 +126,24 @@ arguments to the function, $S$ is the starting external state, $R$ is the return
 by the function, and finally, $S'$, the new external state. Kwiatkowski captures all of $A$, $S$, $R$, $E$, and $S'$. We will co-opt
 this formalization throughout this work.
 
-External state, $S$ and $S'$ are handled in a rules-based manner. Different effects are classified using a rules-based system the
+External state, $S$ and $S'$ are handled in a rules-based manner. Different effects are classified using a rules-based system that
 maps specific bytecode instructions and C function calls to known side-effect types (e.g., the instruction \verb|STORE GLOBAL| indicates
 global variable rebinding, calls to \verb|list.append| indicates mutation of a global variable).
 
 The handling of function arguments $A$ and function return values $R$ are remarkably similar to ExploTest. Pythoscope instruments
 the bytecode for \verb|CALL_FUNCTION| instructions, and then serializes the function arguments and results, just like ExploTest.
 Pythoscope handles serialization failure more gracefully than ExploTest, however, when serialization of a function argument fails,
-Pythonscope emits a test stop with a TODO comment, allowing the developer to complete the test manually. Like ExploTest, the
+Pythoscope emits a test stop with a TODO comment, allowing the developer to complete the test manually. Like ExploTest, the
 serialization-based approach fails on objects that hold operating system resources such as sockets or file descriptors.
 
-Pythoscope has a sophisticated oracle generation approach, since its instruments the entire program execution. It records external state
+Pythoscope has a sophisticated oracle generation approach, since it instruments the entire program execution. It records external state
 throughout the function, and creates oracles involving global state by analyzing the various different global states during
 program execution.
 
 Pythoscope has been abandoned, its last commit was on 2016-08-23, as of 2026-03-26. It only supports Python 2.7.
 
 \subsection{Auger}
-Auger, created by Chris Laffra, et al., \cite{augerblogspot} is another Python 3 unit test carving tool. It functions more similarly to
+Auger, created by Laffra, et al., \cite{augerblogspot} is another Python 3 unit test carving tool. It functions more similarly to
 the previous iteration of ExploTest. The tool works by using the \verb|sys.settrace| API, which intercepts every call and return during
 program execution. It takes note of candidate function-under-tests, and if the function-under-test belongs to a class, it performs
 simple, action based capture by re-constructing the call the \verb|__init__|. All serialization is done via \verb|__repr__|.
@@ -219,11 +219,11 @@ two execution results $R_1$ and $R_2$, AutoAssert tries to apply the following r
 \subsubsection{Argument-reconstruction-reconstructor (ARR) technique}
 
 One concern with serialization is readability and how well serialized arguments lend themselves to source code evolution.
-The argument-reconstruction-reconstructor (ARR) technique tries to simulate some of the benefits of action-based carving statically (it does
+The argument-reconstruction-reconstructor (ARR) technique tries to simulate some of the benefits of action-based carving statically (it does not
 perform any dynamic code instrumentation).
 
 Rather than serializing an object to bytes, the ARR inspects the argument's attributes at runtime using \verb|inspect.getmembers()|, and
-generates code that reconstructs a clone. It bypasses the constructor, instead, creating a skeleton with \verb|__new__|, and then populating
+generates code that reconstructs a clone. It bypasses the constructor by instead creating a skeleton with \verb|__new__|, and then populating
 each attribute with \verb|setattr|. For example, given an instance of \verb|MyClass| with attribute \verb|name = "hello"|, and \verb|count = 67|, the ARR generates:
 
 \begin{verbatim}

@@ -2,7 +2,11 @@
 
 \section{Discussion}
 
-Synthesizing all our RQ answers, 
+Synthesizing all our RQ answers, we find ExploTest is an effective tool for developers to carve unit tests that correctly
+exercise the function under test, with the caveat that the tool's assertions are often extremely poor. The performance penalty of the
+tool is low. Additionally, the burden for developer time in using the tool is also low: a proposed process of using ExploTest
+overlaps with many of the first parts of a systemic debugging process. Performance wise, the benefit of ExploTest carving tests is
+seen most with long-running system tests in complex programs like web frameworks.
 
 \subsection{Importance of external state}
 In RQ1 and RQ2, we discovered limited external state was a factor that contributed to unit tests that
@@ -19,27 +23,63 @@ to handle, while Auger silently fails. Since all the failures of ExploTest come 
 may necessitate the usage of action-based carving to resolve this issue in a future work.
 
 \subsection{Assertion generation}
-ExploTest has extremely poor bug detection capabilities with its AutoAssert implementation.
+Despite being able to exercise the behaviour of the function-under-test in 64\% of the cases,
+only 9\% of runs create tests that expose buggy behaviour. This suggests the assertion generation approach
+the developers took from AutoAssert may be too conservative, by design. Our assertion generation
+assumes the return value of the function-under-test is the primary way of showing program
+correctness, however, this is not the case in many programs. Pythoscope had an alternate
+approach that involved generation assertions by recording and inspecting the entire program state.
 
 \subsection{Speedup relationship}
+In RQ3 we found limited speedups offered by the tool, however, there was a strong, positive relationship
+between system test runtime and the speedup offered by the tool. This makes sense, since longer running and more
+expensive system tests tend to benefit from extracting more focused, smaller and cheaper unit tests. If system tests
+were already cheap (performance wise), the benefits we'd see would be more limited.
 
 \subsection{Workflow similarity to standard debugging}
-
+In RQ5, we find a workflow proposed by the author is quite similar to a standard systematic debugging workflow.
+This suggests a low cognitive and developer burden to using the tool, and the tool can be easily used
+alongside standard debugging procedures. Additionally, the design of the tool to use the \verb|sys.monitoring| API instead
+of \verb|sys.settrace|, which allows for more co-operation with other debugging tools.
 \section{Threats to Validity}
 
 \subsection{Sample size}
 A significant threat to validity is the small sample size of bugs that we evaluated the tool on ($n = 22$).
 
+To mitigate this somewhat, we select bugs from two sources: BugsInPy and QuAC, however, this does not
+resolve the issue of statistical power, especially in RQ2 where there are only 2 buggy repos evaluated.
+
+This small sample size will limit the generalizability of our work,
+and the $R^2$ readings from RQ3 should be carefully evaluated.
+
 \subsection{Selection bias}
+In RQ1, we looked at the effectiveness of the tool in creating tests that correctly exercise function-under-test behaviour,
+however, for the BugsInPy benchmarks, we had already known the buggy functions, where a naive user who had never used ExploTest
+would not know where to place the \verb|@explore| to mark the carve target. Additionally, the evaluator for the bug was the creator,
+and the creator is familiar with which objects in Python may be serializable, and which ones are not. We suggest the reader
+consider the results of RQ1 to be an upper bound on what a skilled user of ExploTest can accomplish, and not what standard users
+without experience with the tool can accomplish.
 
 \subsection{No baseline comparison}
-
-\subsection{RQ5 evaluator}
+We did not compare the tool to any similar tools, and well maintained Python unit test carving tools are few and far between.
+This adds a challenge to interpreting the results of RQ1. A future work should compare different unit testing techniques,
+namely, naive LLM-based test generation (i.e., prompting an agentic AI tool to write a test for our functions), and search based software
+testing tools like Pynguin and Codamosa \cite{lemieux2023codamosa}.
 
 \section{Future Work}
 
 \subsection{Action-based capture}
+One solution to the unserializable objects issue the creators of the tool attempted was to use
+program slicing \cite{weiser1984program} to capture re-creation sequences for objects in Python. There was
+limited success, as slicing is challenging to generalize to Python semantics.
 
-\subsection{Mocking for OS-level resources}
+We suggest an approach closer to that of Auger's \cite{augerblogspot}, where we capture parts of the
+re-creation sequence, instead of the entire sequence using heuristic methods. Capturing limited reconstruction
+sequences may be sufficient to run the code that re-generates most of the object.
 
-\subsection{Improved oracle Generation}
+
+\subsection{Improved oracle generation}
+The approach used in the tool to generate oracles is very naive. It assumes the oracle for the test is simply the output of the function, however, for many functions, especially methods
+that belong to classes, the primary effect of the function is to modify the object that the method was invoked on (i.e., \verb|self|), rather than the output of the function. Additionally, state outside
+of the parameters of the function should also be considered, as some functions may be used (and should be tested) for their effects on global state. We suggest future avenues for improvement, which may
+include a mix of LLM-guided property-based testing, or a more traditional approach, taking inspiration from the bytecode instrumentation that Pythoscope employs.

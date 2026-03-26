@@ -148,7 +148,7 @@ A similar manual source code analysis works to identify return values not conduc
 can inspect the source code for
 freestanding \verb|return|s that indicate a function that is used for its side effects only.
 
-When we identify a method that is a bad candidate for test carving, we  walk up the call graph of the
+When we identify a method that is a bad candidate for test carving, we walk up the call graph of the
 function (i.e., look at the caller and the
 usage of our target function), and place an \verb|@explore| once we determined that the objects are
 serializable, or keep looking up.
@@ -169,7 +169,7 @@ be carvable with our tool.
 
       \item If a non-empty file was produced, inspect the file and run the test using a debugger to determine
             whether the FUT was reached. Observe the
-            output of the function from the generated the unit test against the output of the system test. If they
+            output of the function from the generated unit test against the output of the system test. If they
             are the same, we can consider the FUT to
             be exercised.
 
@@ -214,14 +214,14 @@ This can take a significant amount of time, often longer than the second pass, w
 collection pass \cite{pytestdocs-importmechanism}.
 
 However, ExploTest arbitrarily chooses the PyTest library to generate its tests, therefore, to get a more accurate look at the speedup
-presents, without the overhead of test discovery (the other popular Python unit testing library, \verb|unittest|, does not do a collection pass),
+present, without the overhead of test discovery (the other popular Python unit testing library, \verb|unittest|, does not do a collection pass),
 we measure two different and related execution times:
 
 \begin{itemize}
       \item The real unit test runtime, which is how long it takes for the unit test to run, including the collection
             time. We call this $T_{\text{real}}$. We collect this in the same way as the system test run, using the Python performance counter,
 
-      \item The unit test execution time, which is long it takes the execution pass of PyTest. We measure this using the open source library
+      \item The unit test execution time, which is how long it takes the execution pass of PyTest. We measure this using the open source library
             \href{https://pypi.org/project/pytest-execution-timer/}{pytest-execution-timer} \cite{pytest-exec-timer}. We call this $T_{\text{exec}}$.
 \end{itemize}
 
@@ -241,10 +241,10 @@ below to answer RQ3 on both non-buggy and buggy code to cover all use cases of t
 
 Another side of the unit test generation story is the overhead the tool has when creating unit tests.
 
-While unit tests can speed up the testing process, if generating them takes too much, then the value of the tool is diminished.
+While unit tests can speed up the testing process, if generating them takes too long, then the value of the tool is diminished.
 
 To calculate carving overhead, we look at the system test run time when carving, and when not carving. We devise the metric $T_\text{sys with carving} / T_\text{sys without carving}$ to measure the carving overhead.
-If this ratio is $> 1$ indicates a slowdown.
+A ratio $> 1$ indicates a slowdown.
 
 
 \subsubsection{Answering RQ4}

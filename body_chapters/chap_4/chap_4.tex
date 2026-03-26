@@ -45,7 +45,7 @@ assertions will follow in section 5.
     \parbox{\textwidth}{%
         64\% of ExploTest runs create unit tests that correctly exercise the behaviour of their carving targets.
         Only 9\% of runs create tests that expose buggy behaviour. Test quality degrades sharply at the assertion generation
-        phase: only 2 of 14 correctly-excerising tests produce assertions that expose the target bug.
+        phase: only 2 of 14 correctly-exercising tests produce assertions that expose the target bug.
     }%
 }
 
@@ -59,12 +59,12 @@ RQ2 poses the question: \textit{What software attributes and family are associat
 
 First, let us define what a valid unit test is: a valid unit test created by ExploTest is a unit test that successfully sets up the
 arguments for its carve target (i.e., the function-under-test), and calls the function in such a way where the function call
-is equivalent to one in the system test. Notably, the tested created by the tool need not an oracle, as for exploratory uses
+is equivalent to one in the system test. Notably, the test created by the tool need not have an oracle, as for exploratory uses
 of ExploTest, this is sufficient; the issue of oracle creation is pervasive with automatic unit test generation tools \cite{fraser2015does},
 which this tool does not aim to address.
 
 Looking at our tests and function-under-tests, we can gather some patterns. Particularly, we'll study the two tests
-that are able to fully catch bugs, however these patterns are consistent throughout all our successful runs.
+that are able to fully catch bugs; however, these patterns are consistent throughout all our successful runs.
 
 
 Observe the test generated when run on the \verb|update_headers| procedure from \verb|httpie|
@@ -98,7 +98,7 @@ part of a unit test suite.
 
 The story is similar with oracles---serializable and simple return values mean ExploTest can create meaningful oracles
 that capture defects.
-From our benchmarks, the only two runs that successful capture defects are from \hyperref[sec:httpie-fully-functional-ut]{httpie-3}
+From our benchmarks, the only two runs that successfully capture defects are from \hyperref[sec:httpie-fully-functional-ut]{httpie-3}
 and \hyperref[sec:sanic-fully-functional-ut]{sanic-3}.
 
 Namely, the httpie-3 run has a crash oracle when accessing an invalid property, which immediately fails the test.
@@ -140,7 +140,7 @@ are not notable enough to discuss.
         In terms of software, we categorize our bug origins from 6 different software families, however, we have limited data to make a statistically
         significant conclusion. With our limited data, we find that bugs from source code analysis tools like black and pylint are associated
         with more runs that generate valid unit tests. We hypothesize that this is due to these tools having many qualities from (1), since
-        source code is easily representable with serializable objects. This furthers strengths the validity of our answer for (1).
+        source code is easily representable with serializable objects. This further strengthens the validity of our answer for (1).
     }%
 }
 
@@ -323,10 +323,10 @@ RQ5 poses: \textit{What is the procedure to use ExploTest to catch defects in so
 \subsubsection{Author's technique}
 We discuss the technique the author used to carve the tests for QuAC first.
 
-\begin{enumerate}
+\begin{enumerate}[label=Step \arabic*]
     \item Read the bug report; identify the broken feature
     \item Set up the system test to expose the bug
-    \item Search the codebase for that feature is implemented
+    \item Search the codebase for where that feature is implemented
           \begin{itemize}
               \item The first strategy the author tries is searching the code for strings related to the feature, to try to localize the location.
               \item If this strategy is unable to locate the target function, the author moves on to dynamic analysis methods, which include:
@@ -347,11 +347,11 @@ We discuss the technique the author used to carve the tests for QuAC first.
 
 \subsubsection{Case Study}
 
-Here, we present a case study of how one would use ExploTest in a manner to help in fixing a bug. The bug is \verb|ipython-14930|, where
+Here, we present a case study of how one would use the ExploTest procedure in a manner to help in fixing a bug. The bug is \verb|ipython-14930|, where
 the shell shebang, an escape sequence from the IPython shell to call OS commands does not handle streaming multi-byte, unicode characters properly.
 The bug report is in Figure~\ref{fig:ipython-bug-report}.
 
-\begin{enumerate}
+\begin{enumerate}[label=Step \arabic*]
     \item Reading the bug report, the author internalizes the bug and how to reproduce it.
     \item The author reproduces the bug interactively to verify it is actually present.
     \item The keywords ``streaming'', and the usage of \verb|%%| are the first keywords that jump out to the author.
@@ -377,3 +377,41 @@ The bug report is in Figure~\ref{fig:ipython-bug-report}.
 
 
 \subsubsection{Similarity to standard debugging procedure}
+
+In ``Why Programs Fail: A Guide to Systematic Debugging'' \cite{zeller2009programs}, Zeller describes the seven steps
+in debugging with the TRAFFIC initialism below. We interpret this procedure as how developers typically debug, and how
+they should debug. Let's analyze the similarity between the ExploTest usage process and the TRAFFIC procedure.
+
+\begin{itemize}
+    \item Track the problem in the database $\rightarrow$ Step 1, read the bug report
+    \item Reproduce the failure $\rightarrow$ Step 2, set up the system test to expose the bug
+    \item Automate and simplify $\rightarrow$ No corresponding step, but the test suite that ExploTest generates corresponds
+    \item Find possible infection origins $\rightarrow$ Step 3,4 Search the codebase for keywords
+    \item Focus on most likely origins $\rightarrow$ Step 4, identifying candidate function for \verb|@explore|
+    \item Isolate the infection chain $\rightarrow$ No correspondence
+    \item Correct the defect $\rightarrow$ No correspondence
+\end{itemize}
+
+From this analysis, we observe that the first five steps of the
+TRAFFIC procedure: tracking, reproducing, finding, and focusing
+on infection origins are steps that a developer performing
+systematic debugging would perform regardless of whether they
+use ExploTest.
+
+ExploTest does not introduce a significantly different workflow,
+instead, it augments an existing debugging
+workflow by producing a regression test suite as a byproduct
+of the localization effort the developer is already undertaking.
+Using ExploTest means the developer's investment in reproducing and understanding the
+bug is not discarded after the debugging session concludes,
+but is instead captured as a unit test.
+
+
+\subsubsection{RQ5 Answer}
+\noindent\fbox{%
+    \parbox{\textwidth}{%
+        A proposed usage of the tool by the author is presented, and compared with standard systematic debugging techniques.
+        The proposed usage has significant overlap with the standard systematic debugging workflow, indicating a low cognitive
+        burden to ExploTest use.
+    }%
+}
