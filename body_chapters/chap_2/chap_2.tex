@@ -37,8 +37,7 @@ There are two approaches in capturing $s_{pre}$, explains Elbaum et al.: state-b
 State-based capture involves saving $s_{pre}$, typically serializing $s_{pre}$ to disk, then deserializing
 it to restore $s_{pre}$. ExploTest
 implements this in its pickle-mode. This comes with certain challenges which we will describe later in this
-thesis. The majority (TODO: CHECK IF THIS
-IS ACTUALLY TRUE!) of unit testing tools use state-based capture.
+thesis. The majority of unit test carving tools use state-based capture.
 
 Action-based capture involves saving the instructions before $s_{pre}$, and later replaying those
 instructions to re-create $s_{pre}$. This resolves
@@ -109,29 +108,133 @@ like ARTISAN \cite{gambi2023action} assume
 that the shape of an object does not change, and can assume the object
 
 \section{Prior Work in Test Carving for Python}
-
 \subsection{Pythoscope}
 
 Pythoscope, by Kwiatkowski and Clements-Tiberio \cite*{pythoscopewikidot,pythoscopegithub,l2011capture} is an
 open source Python 2 unit test
-generation tool, created around 2008.
+carving tool, created around 2008.
+
+Pythoscope performs both static and dynamic analysis of the system test run.
+
+The static inspection pass parses source code into abstract syntax trees, then the tool identifies classes, functions,
+and module structure. The dynamic inspector then traces the bytecode of the Python program, and reads the interpreter's stack.
+Using these two techniques, Pythoscope records every function call, attribute access, and global variable read write, which
+gets stored into a project tree.
+
+Kwiatkowski formalizes a function-under-test call as a transformation $f : (A, S) \rightarrow (R, E, S')$, where $A$ is defined as the
+arguments to the function, $S$ is the starting external state, $R$ is the return value of the program, $E$ as the exceptions thrown
+by the function, and finally, $S'$, the new external state. Kwiatkowski captures all of $A$, $S$, $R$, $E$, and $S'$. We will co-opt
+this formalization throughout this work.
+
+External state, $S$ and $S'$ are handled in a rules-based manner. Different effects are classified using a rules-based system the
+maps specific bytecode instructions and C function calls to known side-effect types (e.g., the instruction \verb|STORE GLOBAL| indicates
+global variable rebinding, calls to \verb|list.append| indicates mutation of a global variable).
+
+The handling of function arguments $A$ and function return values $R$ are remarkably similar to ExploTest. Pythoscope instruments
+the bytecode for \verb|CALL_FUNCTION| instructions, and then serializes the function arguments and results, just like ExploTest.
+Pythoscope handles serialization failure more gracefully than ExploTest, however, when serialization of a function argument fails,
+Pythonscope emits a test stop with a TODO comment, allowing the developer to complete the test manually. Like ExploTest, the
+serialization-based approach fails on objects that hold operating system resources such as sockets or file descriptors.
+
+Pythoscope has a sophisticated oracle generation approach, since its instruments the entire program execution. It records external state
+throughout the function, and creates oracles involving global state by analyzing the various different global states during
+program execution.
+
+Pythoscope has been abandoned, its last commit was on 2016-08-23, as of 2026-03-26. It only supports Python 2.7.
 
 \subsection{Auger}
-\cite{augerblogspot}
+Auger, created by Chris Laffra, et al., \cite{augerblogspot} is another Python 3 unit test carving tool. It functions more similarly to
+the previous iteration of ExploTest. The tool works by using the \verb|sys.settrace| API, which intercepts every call and return during
+program execution. It takes note of candidate function-under-tests, and if the function-under-test belongs to a class, it performs
+simple, action based capture by re-constructing the call the \verb|__init__|. All serialization is done via \verb|__repr__|.
+Since \verb|__repr__| does not produce valid Python for many object types (e.g., sockets, file handles), Auger can silently emit
+invalid test files without warning.
 
-\subsection{Fuzzing Book Carver}
-\cite{fuzzingbook2023:Carver}
+Auger has been abandoned, its last commit was on 2019-02-21, as of 2026-03-26. It only supports Python 3.5.
 
-\subsection{Genthat}
+% \subsection{Fuzzing Book Carver}
+% \cite{fuzzingbook2023:Carver}
 
-\section{How ExploTest Performs Unit Test Carving of Python Programs}
+\section{ExploTest Architecture}
 
-Originally created by Zihao Huang under the supervision of Dr. Caroline Lemieux, ExploTest is a unit test
-carving tool used to created unit tests
-from exploratory test runs. As defined by Kaner \cite{kaner2008tutorial}, exploratory testing is an
-unscripted technique where the software designer
-verifies the program's correctness using their own intuition and domain knowledge to uncover defects and
-create test oracles. Exploratory testing
-exercise the whole program, and we aim to capture unit tests for specific methods.
+Originally created by Zihao Huang under the supervision of Dr. Caroline Lemieux, ExploTest is a unit test carving tool.
 
-% \section{}
+ExploTest can be used in an exploratory manner for exploratory testing or for creation regression test suites
+from system test runs.
+As defined by Kaner \cite{kaner2008tutorial}, exploratory testing is an unscripted technique where the software designer verifies the program's
+correctness using their own intuition and domain knowledge to uncover defects and create test oracles. For this thesis, it primarily
+focuses on a tool to create regression test suites.
+
+Adopting the formalization from Pythoscope, we also define Python functions as a transformation $f : (A, S) \rightarrow (R, E, S')$,
+where:
+
+\begin{itemize}
+  \item $A$ is the arguments to the function-under-test
+  \item $S$ is the starting external state to the function
+  \item $R$ the function return value
+  \item $E$ are the exceptions thrown by the function during execution
+  \item $S'$ the external state after the function executes.
+\end{itemize}
+
+Our tool only captures $A$, $R$, and $E$---it completely ignores $S$ and $S'$. A part of this thesis will elucidate whether this design
+decision to not capture external state at all meaningfully impacts the test quality.
+
+
+\subsection{ExploTest Implementation}
+The user of ExploTest marks a carve candidate using the \verb|@explore| annotation.
+
+\subsubsection{Argument building}
+ExploTest performs static and dynamic inspection of the test run, and has many similarities to Pythoscope. Its static pass first builds the
+test AST using the \verb|ast| library built into Python.
+
+The static pass collects all the dependencies of the function by analyzing the imports, and then
+sets up the required Python fixtures for function arguments. Then, the tool performs a dynamic analysis using the \verb|@explore| annotation,
+which binds all the arguments to the function-under-test, (e.g., the function \verb|f(x: int, y: int, z: int)|, called with \verb|f(3,4,5)|
+would have bindings \verb|{x: 3, y: 4, z: 5}|), and, depending on the mode, either serializes them using the \verb|dill| package, or applies the ARR technique defined below.
+Once serializing the arguments is complete,
+the assertion generation phase of the tool begins.
+
+
+\subsubsection{Assertion building}
+Assertions are generated using a derivative of AutoAssert by Zamprogno et al. \cite{zamprogno2022dynamic}. We choose AutoAssert for its
+human-in-the-loop factor, since we expect the user to inspect and edit the unit test after generation.
+
+ExploTest only generates assertions on the
+return value, $R$, not the external state after the function executes, $S'$. This means if the function modifies \verb|self|, for instance,
+the assertion generator is unable to capture that behaviour.
+
+AutoAssert is rules based, and requires the function-under-test be run twice. Given
+two execution results $R_1$ and $R_2$, AutoAssert tries to apply the following ruleset.
+
+\begin{itemize}
+  \item Are $R_1$ and $R_2$ both primitives representable with a Literal (e.g., \verb|str|, \verb|int|, \verb|float|, \verb|None|, \verb|bool|)? $\rightarrow$
+        Create a comparison against the literal.
+  \item Are $R_1$ and $R_2$ equal under their built-in \verb|__eq__| method? $\rightarrow$ Perform an equality assertion with $R_1$.
+  \item Does the function have a custom \verb|__repr__| method, and are reprs of $R_1$ and $R_2$ equal? $\rightarrow$ Assert against the \verb|__repr__|s of $R_1$.
+  \item Does $R_1$ and $R_2$ have a length and are they equal? $\rightarrow$ Create an assertion on the length.
+  \item Are the types of $R_1$ and $R_2$ equal under \verb|type()|? $\rightarrow$ Assert against the name of the type (e.g., \verb|type(return_value).__name__ == "str"|)
+  \item If none of the criteria are met, do not create an assertion.
+\end{itemize}
+
+\subsubsection{Argument-reconstruction-reconstructor (ARR) technique}
+
+One concern with serialization is readability and how well serialized arguments lend themselves to source code evolution.
+The argument-reconstruction-reconstructor (ARR) technique tries to simulate some of the benefits of action-based carving statically (it does
+perform any dynamic code instrumentation).
+
+Rather than serializing an object to bytes, the ARR inspects the argument's attributes at runtime using \verb|inspect.getmembers()|, and
+generates code that reconstructs a clone. It bypasses the constructor, instead, creating a skeleton with \verb|__new__|, and then populating
+each attribute with \verb|setattr|. For example, given an instance of \verb|MyClass| with attribute \verb|name = "hello"|, and \verb|count = 67|, the ARR generates:
+
+\begin{verbatim}
+  arred = module.MyClass.new()
+  setattr(arred, 'name', 'hello')
+  setattr(arred, 'count', 67)
+\end{verbatim}
+
+Before attempting the techniques, ARR performs a reachability check. It traverses the object's attribute graph via breadth-first search
+to verify every attribute can be meaningfully reconstructed. If an object cannot be reconstructed, it falls back to pickling.
+
+The ARR approach has an advantage over Auger's constructor-replay technique, it does not require observing how the object was originally
+constructed. Objects built through the Factory or Builder pattern can all be reconstructed. However, the trade off is that it still does not
+exercise \verb|__init__|, which may set up required external state to the function under test, or enforce invariants.

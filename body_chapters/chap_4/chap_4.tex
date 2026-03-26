@@ -160,7 +160,7 @@ Let us first discuss the real speedups for both non-buggy and buggy cases.
 
 Speedups are similar between buggy and non-buggy cases, and differences can be attributed
 to different code paths being executed in the buggy and non-buggy cases. We discuss the non-buggy case here. The data for the
-buggy case can be found in the appendix, in section \hyperref[sec:sec:speedup-data]{E.1}.
+buggy case can be found in the appendix, in section \hyperref[sec:speedup-data]{E.1}.
 Interesting differences between the non-buggy and buggy cases will also be discussed in this section.
 
 Real speedups are limited for the non-buggy and buggy cases. The median real speedup over both non-buggy and buggy cases offered by the tool is
@@ -227,7 +227,7 @@ compare their speedups in Figure~\ref{fig:quad-distribution-buggy-nonbuggy-analy
     \includegraphics[width=\linewidth]{plots/plots_real_speedup_boxplot.png}
     \centering
     \includegraphics[width=\linewidth]{plots/plots_exec_speedup_boxplot.png}
-    \caption{Regression analysis for mean system test time and execution speedup}
+    \caption{Violin plots of speedup distributions}
     \label{fig:quad-distribution-buggy-nonbuggy-analysis}
 \end{figure}
 
@@ -278,6 +278,7 @@ of $1.43\times$.
 \subsection{RQ4: Causes of tool being unable to generate unit tests}
 RQ4 asked: \textit{What modes of failure occur when the tool fails to create any kind of unit test?}
 
+To answer RQ4, we perform a root-cause-analysis as to why the tool fails to create a unit test. We present the results in Table~\ref{tab:rq4-failures}
 
 \begin{table}[ht]
     \centering
@@ -286,30 +287,93 @@ RQ4 asked: \textit{What modes of failure occur when the tool fails to create any
     % \footnotesize
     \begin{tabular}{llll}
         \toprule
-        \textbf{Bug}  & \textbf{Decorated function}           & \textbf{Unpicklable object(s)}   & \textbf{Object type}                        \\
+        \textbf{Bug}  & \textbf{Decorated function} & \textbf{Unpicklable object(s)}   & \textbf{Object type}              \\
         \midrule
-        sanic-2       & \texttt{serve(loop, sock)}            & \texttt{loop}, \texttt{sock}     & Event loop, OS socket                       \\
-        youtube-dl-12 & \texttt{extract\_info(self)}          & \texttt{self}                    & I/O streams (\texttt{sys.stdout})           \\
-        tornado-10    & \texttt{write\_message(self)}         & \texttt{self}                    & \texttt{IOStream} (OS socket)               \\
-        gunicorn-3144 & \texttt{\_\_init\_\_(self, unreader)} & \texttt{self}, \texttt{unreader} & Socket-backed I/O                           \\
-        ipython-14930 & \texttt{shebang(self)}                & \texttt{self}, \texttt{stream}   & ZMQ kernel, subprocess pipe                 \\
+        sanic-2       & \texttt{serve}              & \texttt{loop}, \texttt{sock}     & Event loop, OS socket             \\
+        youtube-dl-12 & \texttt{extract\_info}      & \texttt{self}                    & I/O streams (\texttt{sys.stdout}) \\
+        tornado-10    & \texttt{write\_message}     & \texttt{self}                    & \texttt{IOStream} (OS socket)     \\
+        gunicorn-3144 & \texttt{\_\_init\_\_}       & \texttt{self}, \texttt{unreader} & Socket-backed I/O                 \\
+        ipython-14930 & \texttt{shebang}            & \texttt{self}, \texttt{stream}   & ZMQ kernel, subprocess pipe       \\
         \midrule
-        seaborn-3553  & \texttt{boxplot(data)}                & (pickling succeeds)              & \texttt{getset\_descriptor} crash$^\dagger$ \\
+        seaborn-3553  & \texttt{boxplot}            & (pickling succeeds)              & \texttt{.mT} crash                \\
         \bottomrule
     \end{tabular}
-
-    \vspace{0.5em}
-    \small
-    % \texttt{inspect.getmembers()} on a 1D numpy array accesses the \texttt{.T} attribute,
-    % which is a \texttt{getset\_descriptor} (not a Python \texttt{property}), raising
-    % \texttt{ValueError: matrix transpose with ndim < 2 is undefined}.
-    % \texttt{inspect.getmembers} only catches \texttt{AttributeError}, so the exception propagates uncaught.
 \end{table}
 
+5/6 failures share a single root cause. The \verb|self| parameter of an instance method contains OS-level resources (sockets, file descriptors, event loops)
+that dill cannot serialize, and are ephemeral resources. The last error occurs in the assertion generation phase. The assertion generator tries to read
+\verb|.T| for a \verb|np.Series|, which consequently calls \verb|.mT| (matrix transpose) in NumPy, however, since an \verb|np.Series| is a 1 dimensioned object,
+an error is thrown, causing the tool to crash.
 
+This suggests a significant impediment to ExploTest and other unit test carving tools is the object creation problem. If one wants to re-create these ephemeral
+OS-level resources, there must exist some degree of action-based carving required to re-request the resources from the OS.
 
+\subsubsection{RQ4 Answer}
+\noindent\fbox{%
+    \parbox{\textwidth}{%
+        In 5/6 cases, ExploTest is unable to generate a unit test suite due to unpicklable arguments. All unpicklable arguments in our examples are from
+        OS-level resources. The single case that causes the tool crash is from an attribute access in the assertion generation stage, which calls a function
+        that throws an uncaught exception.
+    }%
+}
 
 \subsection{RQ5: Tool usage}
 RQ5 poses: \textit{What is the procedure to use ExploTest to catch defects in software?}
 
+\subsubsection{Author's technique}
+We discuss the technique the author used to carve the tests for QuAC first.
 
+\begin{enumerate}
+    \item Read the bug report; identify the broken feature
+    \item Set up the system test to expose the bug
+    \item Search the codebase for that feature is implemented
+          \begin{itemize}
+              \item The first strategy the author tries is searching the code for strings related to the feature, to try to localize the location.
+              \item If this strategy is unable to locate the target function, the author moves on to dynamic analysis methods, which include:
+                    \begin{itemize}
+                        \item \texttt{printf} debugging, trying to localize the buggy function by looking at the lines reached by the function
+                        \item Attaching the Python debugger in Visual Studio Code to locate the target function
+                        \item Using code-coverage tools like coverage.py to understand the control-flow of the program
+                    \end{itemize}
+          \end{itemize}
+    \item Place an \verb|@explore| statement on the target functions, or target functions, and running the system test to carve the unit test
+    \item If ExploTest succeeds, then we have a regression test, otherwise, document accordingly
+    \item If no carve candidate can be found, document as a failure mode (for discussion in RQ4)
+
+
+
+\end{enumerate}
+
+
+\subsubsection{Case Study}
+
+Here, we present a case study of how one would use ExploTest in a manner to help in fixing a bug. The bug is \verb|ipython-14930|, where
+the shell shebang, an escape sequence from the IPython shell to call OS commands does not handle streaming multi-byte, unicode characters properly.
+The bug report is in Figure~\ref{fig:ipython-bug-report}.
+
+\begin{enumerate}
+    \item Reading the bug report, the author internalizes the bug and how to reproduce it.
+    \item The author reproduces the bug interactively to verify it is actually present.
+    \item The keywords ``streaming'', and the usage of \verb|%%| are the first keywords that jump out to the author.
+    \item The author searches for \verb|%%|, which produces a number of results,
+          many of which are false positives, and then the author searches for the keyword \verb|streaming| in
+          the codebase, which returns few meaningful results, then finally \verb|stream|. The author quickly
+          glances at the options and identifies the \verb|shebang| method as a candidate, as the comments
+          (i.e., source code level documentation) explains the behaviour, and it matches our desired behaviour.
+    \item The streaming code is inside a closure, handled by \verb|_handle_stream|, so the author must
+          place the \verb|@explore| on \verb|shebang|, the parent method.
+    \item The author then runs the system test,
+          interactively with the \verb|ipython| command to carve a test. The generation fails, and
+          a discussion is followed in RQ4.
+
+\end{enumerate}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{plots/ipython-debug-issue-sc.png}
+    \caption{Bug report for bug \texttt{ipython-14930}}
+    \label{fig:ipython-bug-report}
+\end{figure}
+
+
+\subsubsection{Similarity to standard debugging procedure}

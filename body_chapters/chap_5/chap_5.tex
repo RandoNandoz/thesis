@@ -1,9 +1,45 @@
 \chapter{Discussion and Future Work}
-% This is a reference to a label in another chapter. Appendix~\ref{chap:app1}. You can always refer to other
-% labels from other chapters with the
-% \textbf{\textbackslash ref} command.
 
-% \section{Common Failure Modalities in Existing Unit Test Carving Tools}
-% ? Look at literature?
+\section{Discussion}
 
-% \section{Common Failure Modalities of ExploTest}
+Synthesizing all our RQ answers, 
+
+\subsection{Importance of external state}
+In RQ1 and RQ2, we discovered limited external state was a factor that contributed to unit tests that
+correctly exercise the function-under-test, we were unable to find any examples where the default external state
+caused the function to produce an incorrect output. This suggests for unit test carving in Python,
+ignoring external state is not a major concern, and tests can still produce correct behaviour if they ignore
+the external state and treat every function as pure. However, for a more rigorous assertion generation like
+Pythoscope performs, external state instrumentation still may contribute to the quality of the tool.
+
+\subsection{Serialization difficulties}
+Serialization presents a pervasive challenge to state-based unit test carving tools. The two previous Python unit test carving
+tools, Pythoscope and Auger are both unable to handle non-serializable objects: Pythoscope leaves a \verb|TODO| for the developer
+to handle, while Auger silently fails. Since all the failures of ExploTest come from OS-requested resources (e.g., streams), it
+may necessitate the usage of action-based carving to resolve this issue in a future work.
+
+\subsection{Assertion generation}
+ExploTest has extremely poor bug detection capabilities with its AutoAssert implementation.
+
+\subsection{Speedup relationship}
+
+\subsection{Workflow similarity to standard debugging}
+
+\section{Threats to Validity}
+
+\subsection{Sample size}
+A significant threat to validity is the small sample size of bugs that we evaluated the tool on ($n = 22$).
+
+\subsection{Selection bias}
+
+\subsection{No baseline comparison}
+
+\subsection{RQ5 evaluator}
+
+\section{Future Work}
+
+\subsection{Action-based capture}
+
+\subsection{Mocking for OS-level resources}
+
+\subsection{Improved oracle Generation}

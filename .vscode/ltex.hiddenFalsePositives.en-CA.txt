@@ -7,3 +7,4 @@
 {"rule":"A_INFINITIVE","sentence":"^\\QIn those web framework repos, where we were able to locate a carve target but was unable to carve a test, all the failures came from \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q or code objects (i.e., pointers to native code) that could not be serialized.\\E$"}
 {"rule":"A_INFINITIVE","sentence":"^\\QThis RQ does not discuss finding the correct place to mark the carve target with \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q,\\E$"}
 {"rule":"A_INFINITIVE","sentence":"^\\QThis RQ does not discuss finding the correct place to mark the carve target with \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q, instead, it looks at the performance penalty of running the system test with carving, since a significant slowdown of the system test when carving significantly impedes the usability and cost-benefit of the tool.\\E$"}
+{"rule":"A_INFINITIVE","sentence":"^\\QThe user of ExploTest marks a carve candidate using the \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q annotation.\\E$"}
