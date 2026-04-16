@@ -3,7 +3,7 @@
 
 \section{Unit Test Carving}
 
-Unit test carving, originally called unit test factoring, was introduced by Saff et al. Test carving is
+Unit test carving, originally called unit test factoring, was introduced by Saff et al \cite{saff2005automatic}. Test carving is
 described to be ``a technique for
 automatically creating fast, focused unit tests from slow system-wide tests; each new unit test exercises
 only a subset of the functionality
@@ -32,7 +32,9 @@ common software engineering parlance, the execution of a carved unit test is as 
   \item Comparing $s_{m}$ to $s_{post} \rightarrow$ the test oracle; typically assertions like \verb|assertEquals|.
 \end{itemize}
 
-There are two approaches in capturing $s_{pre}$, explains Elbaum et al.: state-based and action-based.
+% There are two approaches in capturing $s_{pre}$, explains Elbaum et al.: state-based and action-based.
+
+State-based and action-based carving are two approaches to unit test carving, explains Elbaum et al.
 
 State-based capture involves saving $s_{pre}$, typically serializing $s_{pre}$ to disk, then deserializing
 it to restore $s_{pre}$. ExploTest
@@ -41,14 +43,16 @@ thesis. The majority of unit test carving tools use state-based capture.
 
 Action-based capture involves saving the instructions before $s_{pre}$, and later replaying those
 instructions to re-create $s_{pre}$. This resolves
-many of the challenges of state-based capture, but is harder to do in practice. ExploTest has a limited
-version of action-based capture in its
-argument reconstruction mode.
+many of the challenges of state-based capture discussed in section 2.1.1, but is harder to do in practice.
+
+%ExploTest has a limited
+% version of action-based capture in its
+% argument reconstruction mode.
 
 \subsection{Challenges in State-based Capture}
 
 \subsubsection{Evolution and Serialization}
-Serialization involves storing the state of the program to disk \cite{isocppserialization}. In turn, when we
+Serialization involves storing the state of the program, $s_{pre}$ to disk \cite{isocppserialization}. In turn, when we
 want to restore the state of the
 program, we have to load that state from disk. This state is entirely unaware of changes to the source code,
 which means any changes to the structure
@@ -105,7 +109,7 @@ modification of objects at any point is often used by Python programmers.
 
 This presents challenges to action-based capture, as existing action-based capture unit test carving tools
 like ARTISAN \cite{gambi2023action} assume
-that the shape of an object does not change, and can assume the object
+that the shape of an object does not change.
 
 \section{Prior Work in Test Carving for Python}
 \subsection{Pythoscope}
@@ -136,7 +140,7 @@ Pythoscope handles serialization failure more gracefully than ExploTest, however
 Pythoscope emits a test stop with a TODO comment, allowing the developer to complete the test manually. Like ExploTest, the
 serialization-based approach fails on objects that hold operating system resources such as sockets or file descriptors.
 
-Pythoscope has a sophisticated oracle generation approach, since it instruments the entire program execution. It records external state
+Pythoscope has an action-based oracle generation approach, since it instruments the entire program execution. It records external state
 throughout the function, and creates oracles involving global state by analyzing the various different global states during
 program execution.
 
@@ -233,8 +237,9 @@ each attribute with \verb|setattr|. For example, given an instance of \verb|MyCl
 \end{verbatim}
 
 Before attempting the techniques, ARR performs a reachability check. It traverses the object's attribute graph via breadth-first search
-to verify every attribute can be meaningfully reconstructed. If an object cannot be reconstructed, it falls back to pickling.
+to verify every attribute can be meaningfully reconstructed. If an object cannot be reconstructed, it falls back to pickling. Self-referential
+objects are handled greedily, and use a technique similar to Landin's Knot to handle self-referential objects \cite{koronkevich2025one}.
 
 The ARR approach has an advantage over Auger's constructor-replay technique, it does not require observing how the object was originally
-constructed. Objects built through the Factory or Builder pattern can all be reconstructed. However, the trade off is that it still does not
+constructed. Objects built through the Factory or Builder pattern can all be reconstructed. However, the trade-off is that it still does not
 exercise \verb|__init__|, which may set up required external state to the function under test, or enforce invariants.
