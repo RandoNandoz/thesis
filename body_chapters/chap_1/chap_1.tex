@@ -1,32 +1,63 @@
 \chapter{Introduction}
 % \lipsum[1]
 
-\section{Problem Statement}
+\section{Motivation}
 
 Unit tests are the gold standard to test programs to catch analysis or programming errors. An ideal unit test
 only assesses one behaviour of the
 program, is repeatable and requires no software engineer intervention. They often aid in the debugging
 process, allowing software engineers to
-identify bugs faster, and earlier in the product life cycle. However, the creation of unit tests is often
-falsely perceived to not contribute to the
-product's development.
+identify bugs faster, and earlier in the product life cycle. \cite{orso2014software}
 
-Creating these tests also requires effort to gather the inputs to the test, and
-requires the software engineer to create test
-oracles (assertions in JUnit style testing frameworks) to model correct behaviour. As programs evolve, these
-oracles may shift, and inputs to the
-test may also change. ExploTest attempts to cheaply remedy this by automating the input collection and assertion creation.
+Creating these tests requires effort to gather inputs to the test, and requires the
+software engineer to create unit test oracles (i.e., assertions) to model correct behaviour.
 
-\section{Scope of Research}
-We intend to evaluate 5 research questions enumerated below:
-\begin{itemize}
-        \item [\textbf{RQ1:}] \textbf{To what extent does the unit test carving tool we created generate viable
-                      unit tests when applied to popular,
-                      open-source Python repositories?}
-        \item [\textbf{RQ2:}] \textbf{What software families and attributes are associated with the differing
-                      viabilities of unit tests created by the tool?}
-        \item [\textbf{RQ3:}] \textbf{What is the amount of speedup offered by the unit tests created by the tool compared to
-                      their system test runs?}
-        \item [\textbf{RQ4:}] \textbf{What modes of failure occur when the tool fails to create any kind of unit test?}
-        \item [\textbf{RQ5:}] \textbf{What is the procedure to use ExploTest to catch defects in software?}
-\end{itemize}
+To reduce the effort in creating unit tests, researchers devised techniques to automate
+the generation of test inputs and oracles. Orso and Rothermel \cite{orso2014software}
+enumerate a few: symbolic execution, search based testing, and randomized testing.
+
+Symbolic execution involves running the code unit test (CUT) with symbolic inputs rather
+than concrete inputs, building up constraints on the symbolic input as execution proceeds.
+Symbolic execution generates reproducible and comprehensible inputs which are easily
+human-verified, however, it has limitations as well. Solving constraints is often expensive,
+involving tools like SMT solvers, and struggles when the CUT interfaces with external code.
+Oracles are a challenge for symbolic execution, since there is no way to verify the correctness
+of the output.
+
+Search based testing (SBT) is another approach, which treats test generation as an optimization problem
+on a fitness function, typically test coverage or another quality metric. Approaches typically include some
+type of guided mutation via a genetic algorithm.
+State of the art SBT approaches like CodaMOSA \cite{lemieux2023codamosa} accomplish strong coverage, and work on
+a variety of programs, since they generate concrete inputs rather than symbolic ones. Oracles still
+present a challenge for SBT, since the approach does not verify program correctness.
+
+Randomized testing is similar to SBT, in it also generates randomized inputs, but with less guidance. Randomized
+testing executes programs with randomized inputs. Tools in this family, like Randoop \cite{pacheco2007randoop}
+achieve good coverage, but runtimes can be long. Oracles still present an issue to this technique, since
+randomized testing also does not provide an oracle.
+
+Unit test carving is another approach, and is the approach that ExploTest, the tool discussed in this work uses.
+Symbolic execution, search based testing, and randomized testing are generally performs de novo test generation;
+while test carving has a rich input---the integration test from the developer. This approach produces a unit test
+that is derived from the integration test, and has an implicit oracle of the integration test being correct.
+
+
+% Creating these tests also requires effort to gather the inputs to the test, and
+% requires the software engineer to create test
+% oracles (assertions in JUnit style testing frameworks) to model correct behaviour. As programs evolve, these
+% oracles may shift, and inputs to the
+% test may also change. ExploTest attempts to cheaply remedy this by automating the input collection and assertion creation.
+
+% \section{Scope of Research}
+% We intend to evaluate 5 research questions enumerated below:
+% \begin{itemize}
+%         \item [\textbf{RQ1:}] \textbf{To what extent does the unit test carving tool we created generate viable
+%                       unit tests when applied to popular,
+%                       open-source Python repositories?}
+%         \item [\textbf{RQ2:}] \textbf{What software families and attributes are associated with the differing
+%                       viabilities of unit tests created by the tool?}
+%         \item [\textbf{RQ3:}] \textbf{What is the amount of speedup offered by the unit tests created by the tool compared to
+%                       their system test runs?}
+%         \item [\textbf{RQ4:}] \textbf{What modes of failure occur when the tool fails to create any kind of unit test?}
+%         \item [\textbf{RQ5:}] \textbf{What is the procedure to use ExploTest to catch defects in software?}
+% \end{itemize}
