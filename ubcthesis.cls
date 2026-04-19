@@ -85,6 +85,8 @@
     \if@empty\@previousdegrees\else\vfil\fi%
     \if@empty\@previousdegrees\else\@previousdegrees\fi%
     \vfil
+    A THESIS SUBMITTED IN PARTIAL FULFILLMENT OF\par%
+    THE REQUIREMENTS FOR THE DEGREE OF\par%
     \vspace{1em}
     {\degreetitlefont\@condupper{@upperdegreetitle}{\@degreetitle}\par}%
     \vspace{1em}
