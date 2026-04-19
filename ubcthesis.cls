@@ -31,7 +31,7 @@
 
 \NeedsTeXFormat{LaTeX2e}[1995/12/01]
 \ProvidesClass{ubcthesis}[2015/05/31 v1.72 ^^J
-University of British Columbia Thesis Class]
+  University of British Columbia Thesis Class]
 \PassOptionsToClass{11pt}{genthesis}%
 \PassOptionsToClass{pagenumBR}{genthesis}%
 \PassOptionsToClass{nochapternotereset}{genthesis}%
@@ -51,23 +51,23 @@ University of British Columbia Thesis Class]
 \newlength{\@logowidth}
 \newcommand\@logo{\hbox{
     \iflogo
-    \includegraphics*[height=\@logocopyheight]{\@logofile}
-\fi}}
+      \includegraphics*[height=\@logocopyheight]{\@logofile}
+    \fi}}
 \newcommand\@logocopybare{\vbox{%
     \@condupper{@upperinstitution}{\@institution}\par%
     (\@institutionaddress)\par%
     \@submitdate\par%
-\@copyrighttext}}
+    \@copyrighttext}}
 \newcommand\@logocopy{\vbox{
     \hbox to\@logocopywidth{%
-    \hfil\@condupper{@upperinstitution}{\@institution}\hfil}
+      \hfil\@condupper{@upperinstitution}{\@institution}\hfil}
     \vspace{1.5ex}
     \hbox to\@logocopywidth{\hfil(\@institutionaddress)\hfil}
     \vspace{1.5ex}
     \hbox to\@logocopywidth{\hfil\@submitdate\hfil}
     \vspace{1.5ex}
     \hbox to\@logocopywidth{%
-\hfil\@copyrighttext\hfil}}}
+      \hfil\@copyrighttext\hfil}}}
 \renewcommand{\titlepage}{
   \null\vfil
   \begin{center}%
@@ -85,30 +85,28 @@ University of British Columbia Thesis Class]
     \if@empty\@previousdegrees\else\vfil\fi%
     \if@empty\@previousdegrees\else\@previousdegrees\fi%
     \vfil
-    % An undergrad thesis! :D
-
     \vspace{1em}
-    % {\degreetitlefont\@condupper{@upperdegreetitle}{\@degreetitle}\par}%
-    % \vspace{1em}
-    % in \par%
-    % \vspace{1em}
-    % {\facultyfont \@condupper{@upperfaculty}{\@faculty}\par}%
-    % \vspace{1em}
-    % (\@program)\par%
+    {\degreetitlefont\@condupper{@upperdegreetitle}{\@degreetitle}\par}%
+    \vspace{1em}
+    in \par%
+    \vspace{1em}
+    {\facultyfont \@condupper{@upperfaculty}{\@faculty}\par}%
+    \vspace{1em}
+    (\@program)\par%
     \vspace{1em plus 1fil minus 0.5em}%
     \setbox0=\@logocopybare
     \setlength{\@logocopywidth}{\wd0}
     \settoheight{\@logocopyheight}{\@logocopy}
     \settowidth{\@logowidth}{\@logo}
     \centerline{\hbox{%
-    \hfill\@logo\@logocopy\hspace{\@logowidth}}}
+        \hfill\@logo\@logocopy\hspace{\@logowidth}}}
     \if@empty\@copyrightnotice\else\vfil\@copyrightnotice\fi
   \end{center}
   \vfil\null
 }
 \@AtStartOfAbstract{%
   \if@twoside\else
-  \setcounter{page}{3}
+    \setcounter{page}{3}
   \fi
 }
 

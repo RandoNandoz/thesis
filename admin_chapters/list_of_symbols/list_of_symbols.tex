@@ -1,14 +1,25 @@
-% \chapter{List of Symbols}
+\chapter{List of Symbols}
 
-% % This changes the default spacing of the table. Make sure to reset it to 1 after finished.
-% \def\arraystretch{1.5}
-% % The longtable environment allows the table to span multiple pages
-% \begin{longtable}[l]{l l}
-%     $c$ & speed of light\\
-%     $\hbar$ & reduced Planck constant\\
-%     $\mu_{0}$ & vacuum permeability constant\\
-%     $\varepsilon_{0}$ & vacuum permittivity constant\\
-%     $\Delta$ & Laplace operator\\
-% \end{longtable}
-% % Reset spacing to default
-% \def\arraystretch{1}
+% This changes the default spacing of the table. Make sure to reset it to 1 after finished.
+\def\arraystretch{1.5}
+% The longtable environment allows the table to span multiple pages
+\begin{longtable}[l]{l l}
+    $A$             & Arguments to the function-under-test                                       \\
+    $E$             & Exceptions thrown by the function during execution                         \\
+    $f$             & A function, treated as a transformation $f: (A, S) \rightarrow (R, E, S')$ \\
+    $m$             & A method under consideration (Elbaum et al.\ formalism)                    \\
+    $p$             & $p$-value of a statistical test                                            \\
+    $R$             & Return value of the function-under-test                                    \\
+    $R^2$           & Coefficient of determination                                               \\
+    $S$             & External state before the function executes                                \\
+    $S'$            & External state after the function executes                                 \\
+    $s_m$           & Program state after the execution of $m$ in a carved test                  \\
+    $s_{post}$      & Program state after the final instruction of $m$                           \\
+    $s_{pre}$       & Program state before the first instruction of $m$                          \\
+    $T_\text{exec}$ & Unit test execution time, excluding test collection overhead               \\
+    $T_\text{real}$ & Total unit test runtime, including test collection overhead                \\
+    $T_\text{sys}$  & System test execution time                                                 \\
+    $U$             & Mann-Whitney $U$ statistic                                                 \\
+\end{longtable}
+% Reset spacing to default
+\def\arraystretch{1}
