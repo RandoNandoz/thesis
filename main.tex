@@ -43,15 +43,24 @@ linkcolor=blue,
 
 \usepackage{palatino}  % Latin Modern, the modern version of Computer Modern
 
+\usepackage{xcolor}
+
 % New command for the Examining Committee Page
 \newcommand{\committeeMember}[4]{#1, #2, #3\\\textit{#4}}
+
+% Grey-shaded motivation box for RQs in Chapter 1
+\newcommand{\rqmotivation}[1]{%
+  \fcolorbox{black}{gray!10}{%
+    \parbox{0.95\linewidth}{#1}%
+  }%
+}
 
 \newcolumntype{Y}{>{\centering\arraybackslash}X}
 
 %================================================
 % THESE COMMANDS ARE REQUIRED
 \def \theAuthor {Randy Zhu}
-\def \theTitle {ExploTest, a Python Unit Test Carving Tool}
+\def \theTitle {An Empirical Evaluation of State-Based Unit Test Carving for Python}
 % \def \theSubtitle {Thesis Subtitle, if applicable}
 \def \theDegree {Bachelor of Science}
 \def \theProgramTitle {Honours Computer Science, Option in Software Engineering}

@@ -80,33 +80,7 @@ def test_Session_update_headers(generate_self,
 
 \subsubsection{Function-under-test}
 
-\begin{verbatim}
-def update_headers(self, request_headers):
-    """
-    Update the session headers with the request ones while ignoring
-    certain name prefixes.
-
-    :type request_headers: dict
-
-    """
-    for name, value in request_headers.items():
-
-        # this None-check is not present in the buggy version,
-        # causing the crash, which consequently causes the generated
-        # test to fail.
-        if value is None:
-            continue  # Ignore explicitely unset headers
-
-        value = value.decode('utf8')
-        if name == 'User-Agent' and value.startswith('HTTPie/'):
-            continue
-
-        for prefix in SESSION_IGNORED_HEADER_PREFIXES:
-            if name.lower().startswith(prefix.lower()):
-                break
-        else:
-            self['headers'][name] = value
-\end{verbatim}
+The function-under-test is shown inline in Section 4.1.2.
 
 
 \label{sec:sanic-fully-functional-ut}

@@ -7,16 +7,16 @@ Unit tests are the gold standard to test programs to catch analysis or programmi
 only assesses one behaviour of the
 program, is repeatable and requires no software engineer intervention. They often aid in the debugging
 process, allowing software engineers to
-identify bugs faster, and earlier in the product life cycle. \cite{orso2014software}
+identify bugs faster, and earlier in the product life cycle \cite{orso2014software}.
 
 Creating these tests requires effort to gather inputs to the test, and requires the
 software engineer to create unit test oracles (i.e., assertions) to model correct behaviour.
 
 To reduce the effort in creating unit tests, researchers devised techniques to automate
-the generation of test inputs and oracles. Orso and Rothermel \cite{orso2014software}
+the generation of unit tests. Orso and Rothermel \cite{orso2014software}
 enumerate a few: symbolic execution, search based testing, and randomized testing.
 
-Symbolic execution involves running the code unit test (CUT) with symbolic inputs rather
+Symbolic execution involves running the code-under-test (CUT) with symbolic inputs rather
 than concrete inputs, building up constraints on the symbolic input as execution proceeds.
 Symbolic execution generates reproducible and comprehensible inputs which are easily
 human-verified, however, it has limitations as well. Solving constraints is often expensive,
@@ -31,35 +31,59 @@ State of the art SBT approaches like CodaMOSA \cite{lemieux2023codamosa} accompl
 a variety of programs, since they generate concrete inputs rather than symbolic ones. Oracles still
 present a challenge for SBT, since the approach does not verify program correctness.
 
-Randomized testing is similar to SBT, in it also generates randomized inputs, but with less guidance. Randomized
+Randomized testing is similar to SBT, in that it also generates randomized inputs, but with less guidance. Randomized
 testing executes programs with randomized inputs. Tools in this family, like Randoop \cite{pacheco2007randoop}
 achieve good coverage, but runtimes can be long. Oracles still present an issue to this technique, since
 randomized testing also does not provide an oracle.
 
+The above techniques all focus on unit test input generation, which is only half of creating a unit test. The oracle
+problem in software testing, surveyed by Barr et al. \cite{barr2014oracle}, is the challenge of automatically
+deciding whether a program's output for a given input is correct. For the three techniques above, the input half is
+automated, but the oracle half is not: the software engineer must still write assertions that describe correct
+behaviour. This is the bottleneck that inhibits further automation of unit test generation.
+
 Unit test carving is another approach, and is the approach that ExploTest, the tool discussed in this work uses.
-Symbolic execution, search based testing, and randomized testing are generally performs de novo test generation;
-while test carving has a rich input---the integration test from the developer. This approach produces a unit test
+Symbolic execution, search based testing, and randomized testing generally perform de novo test generation,
+while test carving has a rich input: the integration test from the developer. This approach produces a unit test
 that is derived from the integration test, and has an implicit oracle of the integration test being correct. A detailed
 discussion of unit test carving follows in section 2.1.
 
-In this work, we propose a novel unit test carving tool for Python 3,
-ExploTest, and answer two overarching questions which we try to address:
+Carving has been extensively discussed in the literature for Java \cite{elbaum2006carving, elbaum2008carving, saff2004mock, saff2005automatic, deljouyi2023generating}.
+Despite Python's popularity \cite{jansen2024tiobe}, research into Python unit test carving is limited. The two notable prior tools, Pythoscope \cite{wiatkowski2011pythoscope}
+and Auger \cite{augerblogspot}, are both abandoned, and support only Python 2.7 and Python 3.5 respectively. Python also has less structured semantics than Java, including
+dynamic typing and arbitrary attribute modification \cite{politz2013python}, which complicate carving (discussed in section 2.1.2). This thesis
+investigates whether carving is viable for modern Python.
 
-\begin{itemize}
-        \item Can cheap, state-based carving actually produce useful tests in real Python code?
-        \item Is unit test carving worth it?  
-\end{itemize}
+\section{Research Questions}
+A developer tool is only worth using if (1) it works, and (2) the benefit justifies its cost.
+We structure our evaluation of ExploTest around these two criteria, decomposed into five research questions below,
+with a brief motivation of how the RQ ties back to the criterion, in grey:
 
-\section{Scope of Research}
-We intend to evaluate 5 research questions enumerated below:
-\begin{itemize}
-        \item [\textbf{RQ1:}] \textbf{To what extent does the unit test carving tool we created generate viable
-                      unit tests when applied to popular,
-                      open-source Python repositories?}
-        \item [\textbf{RQ2:}] \textbf{What software families and attributes are associated with the differing
-                      viabilities of unit tests created by the tool?}
-        \item [\textbf{RQ3:}] \textbf{What is the amount of speedup offered by the unit tests created by the tool compared to
-                      their system test runs?}
-        \item [\textbf{RQ4:}] \textbf{What modes of failure occur when the tool fails to create any kind of unit test?}
-        \item [\textbf{RQ5:}] \textbf{What is the procedure to use ExploTest to catch defects in software?}
-\end{itemize}
+\noindent\textbf{RQ1: To what extent does the unit test carving tool we created generate viable unit tests when applied to popular, open-source Python repositories?}
+
+\rqmotivation{Probes criterion 1 of whether carving produces useful tests in real Python code.}
+
+\noindent\textbf{RQ2: What software families and attributes are associated with the differing viabilities of unit tests created by the tool?}
+
+\rqmotivation{Refines RQ1 by investigating what kind of conditions create useful unit tests.}
+
+\noindent\textbf{RQ3: What is the amount of speedup offered by the unit tests created by the tool compared to their system test runs?}
+
+\rqmotivation{Investigates the performance side of criterion 2. Carving's original promise in Saff et al.\ \cite{saff2005automatic} was to produce faster unit tests from slower system tests; we measure whether that promise is preserved.}
+
+\noindent\textbf{RQ4: What modes of failure occur when the tool fails to create any kind of unit test?}
+
+\rqmotivation{The negative case of RQ1. When the tool is unable to generate a test, why? The failure modes tell us whether the limitations are fundamental to state-based carving, or incidental to our implementation.}
+
+\noindent\textbf{RQ5: What is the procedure to use ExploTest to catch defects in software?}
+
+\rqmotivation{Probes the developer-cost side of criterion 2. Even if carving is technically effective, it is only worth adopting if it integrates into developers' workflows.}
+
+\section{Contributions}
+
+This thesis makes four contributions.
+First, we present a substantial rewrite of the ExploTest tool, including the ARR technique for object reconstruction.
+Second, we conduct the first empirical evaluation of state-based unit test carving for Python 3,
+using 22 bugs from 12 open-source repositories.
+Third, we characterize the tool's failure modes.
+Fourth, we propose a usage procedure for ExploTest that integrates unit test carving into a standard debugging workflow.

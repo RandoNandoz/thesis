@@ -59,23 +59,60 @@ RQ2 poses the question: \textit{What software attributes and family are associat
 
 First, let us define what a valid unit test is: a valid unit test created by ExploTest is a unit test that successfully sets up the
 arguments for its carve target (i.e., the function-under-test), and calls the function in such a way where the function call
-is equivalent to one in the system test. Notably, the test created by the tool need not have an oracle, as for exploratory uses
-of ExploTest, this is sufficient; the issue of oracle creation is pervasive with automatic unit test generation tools \cite{fraser2015does},
-which this tool does not aim to address.
+is equivalent to one in the system test. Notably, the test created by the tool need not have an oracle.
+
+We separate these two concerns because carving and oracle generation are distinct stages of the pipeline: carving is responsible
+for reconstructing the call (state capture and replay), while AutoAssert layers an oracle on top. Bundling them into a single
+notion of validity would conflate two different failure modes in RQ1's numbers; a run that perfectly reconstructs the call but
+produces a weak assertion would be indistinguishable from a run that failed to serialize its arguments. Oracle quality is
+also a well-known hard problem for automatic unit test generation in general \cite{fraser2015does}, so isolating it lets us
+evaluate carving on its own terms. We treat oracle strength as a second, separate viability in the next subsection.
 
 Looking at our tests and function-under-tests, we can gather some patterns. Particularly, we'll study the two tests
 that are able to fully catch bugs; however, these patterns are consistent throughout all our successful runs.
 
 
-Observe the test generated when run on the \verb|update_headers| procedure from \verb|httpie|
-in \hyperref[sec:httpie-fully-functional-ut]{A.1}. The test is able to detect the bug since in
-the buggy version the check for \verb|value is None| is not present and causes the reference
-to \verb|value.decode| to throw a \verb|NameError|.
+Consider the \verb|update_headers| procedure from \verb|httpie|, shown below. The generated test
+itself is available in \hyperref[sec:httpie-fully-functional-ut]{A.1}.
+
+\begin{verbatim}
+def update_headers(self, request_headers):
+    """
+    Update the session headers with the request ones while ignoring
+    certain name prefixes.
+
+    :type request_headers: dict
+
+    """
+    for name, value in request_headers.items():
+
+        # this None-check is not present in the buggy version,
+        # causing the crash, which consequently causes the generated
+        # test to fail.
+        if value is None:
+            continue  # Ignore explicitely unset headers
+
+        value = value.decode('utf8')
+        if name == 'User-Agent' and value.startswith('HTTPie/'):
+            continue
+
+        for prefix in SESSION_IGNORED_HEADER_PREFIXES:
+            if name.lower().startswith(prefix.lower()):
+                break
+        else:
+            self['headers'][name] = value
+\end{verbatim}
+
+The test is able to detect the bug since in the buggy version the check for \verb|value is None|
+is not present and causes the reference to \verb|value.decode| to throw a \verb|NameError|.
 
 The other test for in the ``uncovers bug'' category for the \verb|sanic| web framework in \hyperref[sec:sanic-fully-functional-ut]{A.2}
 has similar attributes to the first. The function-under-test, \verb|url_for|'s only external data dependencies are on the \verb|re|
 regular expression library and the \verb|urlencode|, \verb|urldecode| functions from \verb|urllib| library which do not require
 any previous state to be set up for them.
+
+Extracting the common thread from the \verb|httpie| and \verb|sanic| cases, and checking the pattern against
+our other successful runs, we identify four attributes shared by function-under-tests that yield valid unit tests:
 
 \begin{itemize}
     \item The function-under-test has limited external dependencies for it to function.
@@ -125,10 +162,9 @@ are not notable enough to discuss.
 
         \medskip
 
-        We find 4 major software qualities that contribute
+        We find 3 major software qualities that contribute
         to (1): limited external dependencies (the absence of global state), and if there is a dependency on external state, no external setup
         is required for them. Target function-under-tests must have serializable parameters, since the tool is a record-and-replay tool.
-        The function must be discoverable by the test, namely, they cannot be closures and must be directly exposed to other functions.
 
         \medskip
 
@@ -182,7 +218,7 @@ To answer the question, we perform a simple linear regression, shown in Figure~\
     \label{fig:real_speedup_plot}
 \end{figure}
 
-We do observe a statistically significant and strong linear relationship between the system test time and real speedup ($R^2 = 0.849, p < 0.001$).
+We report $R^2$, the standard coefficient of determination, as our goodness-of-fit metric. We do observe a statistically significant and strong linear relationship between the system test time and real speedup ($R^2 = 0.849, p < 0.001$).
 
 This is consistent with our understanding of the underlying benchmark suite, namely, tornado and sanic, the two code bases that exhibit
 a speedup are both web frameworks, and their underlying system test benchmark involves \verb|curl|ing an endpoint, which imposes
@@ -212,8 +248,14 @@ the buggy case, and can be found in the appendix.
 \end{figure}
 
 Unlike in the real speedup case, we find no relationship ($R^2 = 0.185, p = 0.110$) between execution speedup and system test time.
-This is consistent with our understanding of unit testing: unit tests exercise less code
-than system tests, so their execution time is largely independent of the system test's duration. If we treat system test execution time as a proxy for the amount of code exercised by the system test, and unit test execution time as a proxy for the amount of code exercised by the unit test, the lack of correlation follows naturally.
+Real speedup's denominator is dominated by PyTest's collection overhead, a constant cost across every test suite. When the denominator is essentially constant,
+the ratio scales linearly with the numerator, so real speedup tracks system test time directly.
+Execution speedup strips the collection time out, removing the constant factor.
+The remaining denominator is the unit test's own execution time, which tends to track system test time
+(a more complex function-under-test makes both slow in similar proportion), so their ratio stays roughly
+flat, and system test time alone stops predicting speedup.
+
+
 
 \subsubsection{Real and execution speedups: Non-buggy vs buggy}
 
@@ -383,13 +425,13 @@ in debugging with the TRAFFIC initialism below. We interpret this procedure as h
 they should debug. Let's analyze the similarity between the ExploTest usage process and the TRAFFIC procedure.
 
 \begin{itemize}
-    \item Track the problem in the database $\rightarrow$ Step 1, read the bug report
-    \item Reproduce the failure $\rightarrow$ Step 2, set up the system test to expose the bug
-    \item Automate and simplify $\rightarrow$ No corresponding step, but the test suite that ExploTest generates corresponds
-    \item Find possible infection origins $\rightarrow$ Step 3,4 Search the codebase for keywords
-    \item Focus on most likely origins $\rightarrow$ Step 4, identifying candidate function for \verb|@explore|
-    \item Isolate the infection chain $\rightarrow$ No correspondence
-    \item Correct the defect $\rightarrow$ No correspondence
+    \item \textbf{T}rack the problem in the database $\rightarrow$ Step 1, read the bug report
+    \item \textbf{R}eproduce the failure $\rightarrow$ Step 2, set up the system test to expose the bug
+    \item \textbf{A}utomate and simplify $\rightarrow$ No corresponding step, but the test suite that ExploTest generates corresponds
+    \item \textbf{F}ind possible infection origins $\rightarrow$ Step 3,4 Search the codebase for keywords
+    \item \textbf{F}ocus on most likely origins $\rightarrow$ Step 4, identifying candidate function for \verb|@explore|
+    \item \textbf{I}solate the infection chain $\rightarrow$ No correspondence
+    \item \textbf{C}orrect the defect $\rightarrow$ No correspondence
 \end{itemize}
 
 From this analysis, we observe that the first five steps of the

@@ -13,37 +13,39 @@ carve-and-replay \cite*{elbaum2006carving, elbaum2008carving}), recording functi
 the inputs and outputs of the function,
 then invoking the function again with said captured inputs.
 
-Elbaum et al. \cite{elbaum2006carving} coined the term unit test carving, and they abstractly break down unit
-test carving for a given method $m$
-during program execution. Both the program state before the first instruction of $m$, called $s_{pre}$ and
-the state after the final instruction of
-$m$, called $s_{post}$ are captured. A pair of states before and after the execution of $m$: ($s_{pre}$,
-$s_{post}$) constitute a unit test for $m$.
-As the codebase of a program evolves, $m$ may change over time.
+Elbaum et al. \cite{elbaum2006carving} coined the term unit test carving. Abstractly, carving a unit
+test for a given method $m$ involves capturing the program state immediately before and after $m$'s
+execution, and the pair of these pre- and post-execution states constitutes a unit test for $m$. As
+the codebase of a program evolves, $m$ may change over time.
 
-The execution of a carved unit test must first restore $s_{pre}$, execute $m$, then compare the state after
-the execution ($s_{m}$) to $s_{post}$. In
-common software engineering parlance, the execution of a carved unit test is as follows:
+We adopt the more granular formalism of Kwiatkowski \cite{l2011capture}, who models a function-under-test
+call as a transformation $f : (A, S) \rightarrow (R, E, S')$, where $A$ is the arguments to the function,
+$S$ is the starting external state, $R$ is the return value, $E$ are the exceptions thrown, and $S'$ is
+the new external state.
+
+The execution of a carved unit test must first restore $(A, S)$, execute $m$, then compare the observed
+$(R, E, S')$ to the captured $(R, E, S')$. In common software engineering parlance, the execution of a
+carved unit test is as follows:
 
 \begin{itemize}
-  \item Restoring $s_{pre} \rightarrow$ test setup; typically found in the fixtures or the
+  \item Restoring $(A, S) \rightarrow$ test setup; typically found in the fixtures or the
         \verb|@BeforeEach| part of a unit test.
   \item Executing $m \rightarrow$ running the function-under-test
-  \item Comparing $s_{m}$ to $s_{post} \rightarrow$ the test oracle; typically assertions like \verb|assertEquals|.
+  \item Comparing observed $(R, E, S')$ to captured $(R, E, S') \rightarrow$ the test oracle; typically
+        assertions like \verb|assertEquals|.
 \end{itemize}
 
-% There are two approaches in capturing $s_{pre}$, explains Elbaum et al.: state-based and action-based.
+% There are two approaches in capturing $(A, S)$, explains Elbaum et al.: state-based and action-based.
 
 State-based and action-based carving are two approaches to unit test carving, explains Elbaum et al.
 
-State-based capture involves saving $s_{pre}$, typically serializing $s_{pre}$ to disk, then deserializing
-it to restore $s_{pre}$. ExploTest
-implements this in its pickle-mode. This comes with certain challenges which we will describe later in this
-thesis. The majority of unit test carving tools use state-based capture.
+State-based capture involves saving $(A, S)$, typically serializing it to disk, then deserializing to
+restore it. This comes with certain challenges which we will describe later in this thesis. The majority
+of unit test carving tools use state-based capture.
 
-Action-based capture involves saving the instructions before $s_{pre}$, and later replaying those
-instructions to re-create $s_{pre}$. This resolves
-many of the challenges of state-based capture discussed in section 2.1.1, but is harder to do in practice.
+Action-based capture involves saving the instructions that produced $(A, S)$, and later replaying those
+instructions to re-create it. This resolves many of the challenges of state-based capture discussed in
+section 2.1.1, but is harder to do in practice.
 
 %ExploTest has a limited
 % version of action-based capture in its
@@ -51,8 +53,11 @@ many of the challenges of state-based capture discussed in section 2.1.1, but is
 
 \subsection{Challenges in State-based Capture}
 
+These challenges all concern the capture and restoration of $(A, S)$: either it cannot be serialized
+faithfully, or the serialized form becomes unmaintainable.
+
 \subsubsection{Evolution and Serialization}
-Serialization involves storing the state of the program, $s_{pre}$ to disk \cite{isocppserialization}. In turn, when we
+Serialization involves storing the state of the program, $(A, S)$, to disk \cite{isocppserialization}. In turn, when we
 want to restore the state of the
 program, we have to load that state from disk. This state is entirely unaware of changes to the source code,
 which means any changes to the structure
@@ -121,14 +126,14 @@ carving tool, created around 2008.
 Pythoscope performs both static and dynamic analysis of the system test run.
 
 The static inspection pass parses source code into abstract syntax trees, then the tool identifies classes, functions,
-and module structure. The dynamic inspector then traces the bytecode of the Python program, and reads the interpreter's stack.
+and module structure. The dynamic inspector achieves per-bytecode tracing using CPython's \verb|sys.settrace|
+combined with Batchelder's line-number-table rewriting hack \cite{batchelder2008bytecode}, which makes every
+bytecode instruction appear as its own line so that the \verb|'line'| event fires for each one.
 Using these two techniques, Pythoscope records every function call, attribute access, and global variable read write, which
 gets stored into a project tree.
 
-Kwiatkowski formalizes a function-under-test call as a transformation $f : (A, S) \rightarrow (R, E, S')$, where $A$ is defined as the
-arguments to the function, $S$ is the starting external state, $R$ is the return value of the program, $E$ as the exceptions thrown
-by the function, and finally, $S'$, the new external state. Kwiatkowski captures all of $A$, $S$, $R$, $E$, and $S'$. We will co-opt
-this formalization throughout this work.
+Using the $f : (A, S) \rightarrow (R, E, S')$ formalism introduced in section 2.1, Pythoscope captures all
+of $A$, $S$, $R$, $E$, and $S'$.
 
 External state, $S$ and $S'$ are handled in a rules-based manner. Different effects are classified using a rules-based system that
 maps specific bytecode instructions and C function calls to known side-effect types (e.g., the instruction \verb|STORE GLOBAL| indicates
@@ -137,7 +142,7 @@ global variable rebinding, calls to \verb|list.append| indicates mutation of a g
 The handling of function arguments $A$ and function return values $R$ are remarkably similar to ExploTest. Pythoscope instruments
 the bytecode for \verb|CALL_FUNCTION| instructions, and then serializes the function arguments and results, just like ExploTest.
 Pythoscope handles serialization failure more gracefully than ExploTest, however, when serialization of a function argument fails,
-Pythoscope emits a test stop with a TODO comment, allowing the developer to complete the test manually. Like ExploTest, the
+Pythoscope emits a test stub with a TODO comment, allowing the developer to complete the test manually. Like ExploTest, the
 serialization-based approach fails on objects that hold operating system resources such as sockets or file descriptors.
 
 Pythoscope has an action-based oracle generation approach, since it instruments the entire program execution. It records external state
@@ -161,28 +166,14 @@ Auger has been abandoned, its last commit was on 2019-02-21, as of 2026-03-26. I
 
 \section{ExploTest Architecture}
 
-Originally created by Zihao Huang under the supervision of Dr. Caroline Lemieux, ExploTest is a unit test carving tool.
+ExploTest is a unit test carving tool, originally conceived by Zihao Huang under the supervision of Dr. Caroline Lemieux and substantially rewritten for this thesis. A full attribution appears in the preface.
+
 
 ExploTest can be used in an exploratory manner for exploratory testing or for creation regression test suites
 from system test runs.
 As defined by Kaner \cite{kaner2008tutorial}, exploratory testing is an unscripted technique where the software designer verifies the program's
 correctness using their own intuition and domain knowledge to uncover defects and create test oracles. For this thesis, it primarily
 focuses on a tool to create regression test suites.
-
-Adopting the formalization from Pythoscope, we also define Python functions as a transformation $f : (A, S) \rightarrow (R, E, S')$,
-where:
-
-\begin{itemize}
-  \item $A$ is the arguments to the function-under-test
-  \item $S$ is the starting external state to the function
-  \item $R$ the function return value
-  \item $E$ are the exceptions thrown by the function during execution
-  \item $S'$ the external state after the function executes.
-\end{itemize}
-
-Our tool only captures $A$, $R$, and $E$---it completely ignores $S$ and $S'$. A part of this thesis will elucidate whether this design
-decision to not capture external state at all meaningfully impacts the test quality.
-
 
 \subsection{ExploTest Implementation}
 The user of ExploTest marks a carve candidate using the \verb|@explore| annotation.
@@ -243,3 +234,42 @@ objects are handled greedily, and use a technique similar to Landin's Knot to ha
 The ARR approach has an advantage over Auger's constructor-replay technique, it does not require observing how the object was originally
 constructed. Objects built through the Factory or Builder pattern can all be reconstructed. However, the trade-off is that it still does not
 exercise \verb|__init__|, which may set up required external state to the function under test, or enforce invariants.
+
+\subsubsection{Comparison with Pythoscope}
+ExploTest and Pythoscope are independent state-based carving tools for Python, separated by roughly fifteen years and one major language version.
+Table \ref{tab:pythoscope-explotest} summarizes their differences. The central contrast is one of implementation surface.
+Pythoscope's tracer depends on per-bytecode tracing, an import-hook-driven code rewriter, and \verb|ctypes| value-stack inspection to capture the full
+$f : (A, S) \rightarrow (R, E, S')$ formalism, while ExploTest captures the narrower subset $(A, R, E)$ using a decorator
+and a static AST pass. On unserializable arguments,
+Pythoscope degrades to a test stub with a TODO comment; ExploTest terminates.
+Whether ExploTest's simpler design and narrower capture surface meaningfully impacts test quality is a question this thesis addresses empirically.
+
+\begin{table}[h]
+  \centering
+  \caption{Comparison of Pythoscope and ExploTest design choices.}
+  \label{tab:pythoscope-explotest}
+  \begin{tabularx}{\linewidth}{l X X}
+    \toprule
+     & \textbf{Pythoscope}                                    & \textbf{ExploTest} \\
+    \midrule
+    Formalism coverage
+     & $A, S, R, E, S'$
+     & $A, R, E$                                                                   \\
+    \addlinespace
+    Capture mechanism
+     & Bytecode tracing
+     & \verb|@explore| decorator + static AST pass                                 \\
+    \addlinespace
+    Argument serialization
+     & Stack snapshot with rules-based side-effect classifier
+     & \verb|dill| (pickle-mode) or ARR                                            \\
+    \addlinespace
+    Oracle generation
+     & Rules-based over captured $S'$ deltas
+     & AutoAssert over $R$                                                         \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+
+

@@ -18,7 +18,7 @@ Pythoscope performs, external state instrumentation still may contribute to the 
 
 \subsection{Serialization difficulties}
 Serialization presents a pervasive challenge to state-based unit test carving tools. The two previous Python unit test carving
-tools, Pythoscope and Auger are both unable to handle non-serializable objects: Pythoscope leaves a \verb|TODO| for the developer
+tools, Pythoscope and Auger are both unable to handle unserializable objects: Pythoscope leaves a \verb|TODO| for the developer
 to handle, while Auger silently fails. Since all the failures of ExploTest come from OS-requested resources (e.g., streams), it
 may necessitate the usage of action-based carving to resolve this issue in a future work.
 
