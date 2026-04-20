@@ -3,9 +3,9 @@
 
 \section{Motivation}
 
-Unit tests are the gold standard to test programs to catch analysis or programming errors. An ideal unit test
-only assesses one behaviour of the
-program, is repeatable and requires no software engineer intervention. They often aid in the debugging
+Unit tests are the gold standard to test programs to catch analysis or programming errors. Ideal unit tests
+only assess one behaviour of the
+program, are repeatable, and require no software engineer intervention. They often aid in the debugging
 process, allowing software engineers to
 identify bugs faster, and earlier in the product life cycle \cite{orso2014software}.
 
@@ -42,7 +42,7 @@ deciding whether a program's output for a given input is correct. For the three 
 automated, but the oracle half is not: the software engineer must still write assertions that describe correct
 behaviour. This is the bottleneck that inhibits further automation of unit test generation.
 
-Unit test carving is another approach, and is the approach that ExploTest, the tool discussed in this work uses.
+Unit test carving is another approach, and is the approach that ExploTest, the tool discussed in this work, uses.
 Symbolic execution, search based testing, and randomized testing generally perform de novo test generation,
 while test carving has a rich input: the integration test from the developer. This approach produces a unit test
 that is derived from the integration test, and has an implicit oracle of the integration test being correct. A detailed
@@ -63,7 +63,7 @@ with a brief motivation of how the RQ ties back to the criterion, in grey:
 
 \rqmotivation{Probes criterion 1 of whether carving produces useful tests in real Python code.}
 
-\noindent\textbf{RQ2: What software families and attributes are associated with the differing viabilities of unit tests created by the tool?}
+\noindent\textbf{RQ2: What software attributes and family are associated with the differing viabilities of unit tests created by the tool?}
 
 \rqmotivation{Refines RQ1 by investigating what kind of conditions create useful unit tests.}
 

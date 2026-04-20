@@ -89,7 +89,7 @@ function-under-test (FUT) and then assess its return value with an oracle which 
 If ExploTest does produce a unit test, we assess 5 different qualities of the unit tests.
 \subsubsection{Test Qualities}
 \begin{itemize}
-      \item \textbf{Function called}: Does the tool correctly setup and call the required function?
+      \item \textbf{Function called}: Does the tool correctly set up and call the required function?
       \item \textbf{Output correct}: When the function-under-test is called by the generated unit test,
             does it have the same output as the function during the system test?
       \item \textbf{Oracle created}: Are any assertions generated in the test?
@@ -142,7 +142,7 @@ be serializable, as discussed in chapter
 
 Oftentimes, human inspection of the source code allows us to determine the presence of unserializable
 objects. We can infer these properties from
-variable names, for example, variables named \verb|frame| suggest the presence of frame objects which contain
+variable names; for example, variables named \verb|frame| suggest the presence of frame objects which contain
 pointers to native code that cannot be serialized.
 
 A similar manual source code analysis works to identify return values not conducive to good test oracles.
@@ -234,7 +234,7 @@ we measure two different and related execution times:
 \end{itemize}
 
 Recall we have two categories of function-under-test, a non-buggy and a buggy one. We measure speedups of running the test
-on both non-buggy and buggy version of the codebases we have, to capture two different experiences when using the
+on both non-buggy and buggy versions of the codebases we have, to capture two different experiences when using the
 tests that ExploTest generates.
 
 We generate tests only on the non-buggy version, for two reasons. First, an oracle carved from known-good code is
@@ -266,7 +266,7 @@ RQ4 asked: \textit{What modes of failure occur when the tool fails to create any
 When carving tests, the most common cause of failure are unserializable objects. We will discuss the root
 cause of these objects and their
 frequencies. Another failure mode is a defective
-oracle that either fails on correct code, or oracles that pass on incorrect code.
+oracle that either fails on correct code or passes on incorrect code.
 
 \subsubsection{Answering RQ5}
 RQ5 poses: \textit{What is the procedure to use ExploTest to catch defects in software?}

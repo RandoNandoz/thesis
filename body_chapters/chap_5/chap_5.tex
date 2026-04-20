@@ -6,7 +6,7 @@ Here we interpret some results of the RQs.
 
 \subsection{Importance of external state}
 In RQ1 and RQ2, we discovered limited external state was a factor that contributed to unit tests that
-correctly exercise the function-under-test, we were unable to find any examples where the default external state
+correctly exercised the function-under-test; we were unable to find any examples where the default external state
 caused the function to produce an incorrect output. This suggests for unit test carving in Python,
 ignoring external state is not a major concern, and tests can still produce correct behaviour if they ignore
 the external state and treat every function as pure. However, for a more rigorous assertion generation like
@@ -16,7 +16,7 @@ Pythoscope performs, external state instrumentation still may contribute to the 
 Serialization presents a pervasive challenge to state-based unit test carving tools. The two previous Python unit test carving
 tools, Pythoscope and Auger are both unable to handle unserializable objects: Pythoscope leaves a \verb|TODO| for the developer
 to handle, while Auger silently fails. Since all the failures of ExploTest come from OS-requested resources (e.g., streams), it
-may necessitate the usage of action-based carving to resolve this issue in a future work.
+may necessitate the usage of action-based carving to resolve this issue in future work.
 
 \subsection{Assertion generation}
 Despite being able to exercise the behaviour of the function-under-test in 64\% of the cases,
@@ -24,7 +24,7 @@ only 9\% of runs create tests that expose buggy behaviour. This suggests the ass
 the developers took from AutoAssert may be too conservative, by design. Our assertion generation
 assumes the return value of the function-under-test is the primary way of showing program
 correctness, however, this is not the case in many programs. Pythoscope had an alternate
-approach that involved generation assertions by recording and inspecting the entire program state.
+approach that involved generating assertions by recording and inspecting the entire program state.
 
 \subsection{Speedup relationship}
 In RQ3 we found limited speedups offered by the tool, however, there was a strong, positive relationship
@@ -35,7 +35,7 @@ were already cheap (performance wise), the benefits we'd see would be more limit
 \subsection{Workflow similarity to standard debugging}
 In RQ5, we find a workflow proposed by the author is quite similar to a standard systematic debugging workflow.
 This suggests a low cognitive and developer burden to using the tool, and the tool can be easily used
-alongside standard debugging procedures. Additionally, the design of the tool to use the \verb|sys.monitoring| API instead
+alongside standard debugging procedures. Additionally, the tool uses the \verb|sys.monitoring| API instead
 of \verb|sys.settrace|, which allows for more co-operation with other debugging tools.
 \section{Threats to Validity}
 
@@ -50,7 +50,7 @@ and the $R^2$ readings from RQ3 should be carefully evaluated.
 
 \subsection{Selection bias}
 In RQ1, we looked at the effectiveness of the tool in creating tests that correctly exercise function-under-test behaviour,
-however, for the BugsInPy benchmarks, we had already known the buggy functions, where a naive user who had never used ExploTest
+however, for the BugsInPy benchmarks, we already knew the buggy functions, where a naive user who had never used ExploTest
 would not know where to place the \verb|@explore| to mark the carve target. Additionally, the evaluator for the bug was the creator,
 and the creator is familiar with which objects in Python may be serializable, and which ones are not. We suggest the reader
 consider the results of RQ1 to be an upper bound on what a skilled user of ExploTest can accomplish, and not what standard users
@@ -58,7 +58,7 @@ without experience with the tool can accomplish.
 
 \subsection{No baseline comparison}
 We did not compare the tool to any similar tools, and well maintained Python unit test carving tools are few and far between.
-This adds a challenge to interpreting the results of RQ1. A future work should compare different unit testing techniques,
+This adds a challenge to interpreting the results of RQ1. Future work should compare different unit testing techniques,
 namely, naive LLM-based test generation (i.e., prompting an agentic AI tool to write a test for our functions), and search based software
 testing tools like Pynguin and CodaMOSA \cite{lemieux2023codamosa}.
 
@@ -69,7 +69,7 @@ One solution to the unserializable objects issue the creators of the tool attemp
 program slicing \cite{weiser1984program} to capture re-creation sequences for objects in Python. There was
 limited success, as slicing is challenging to generalize to Python semantics.
 
-We suggest an approach closer to that of Auger's \cite{augerblogspot}, where we capture parts of the
+We suggest an approach closer to Auger's \cite{augerblogspot}, where we capture parts of the
 re-creation sequence, instead of the entire sequence using heuristic methods. Capturing limited reconstruction
 sequences may be sufficient to run the code that re-generates most of the object.
 

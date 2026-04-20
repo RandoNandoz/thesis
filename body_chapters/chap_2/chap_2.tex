@@ -3,7 +3,7 @@
 
 \section{Unit Test Carving}
 
-Unit test carving, originally called unit test factoring, was introduced by Saff et al \cite{saff2005automatic}. Test carving is
+Unit test carving, originally called unit test factoring, was introduced by Saff et al.\ \cite{saff2005automatic}. Test carving is
 described to be ``a technique for
 automatically creating fast, focused unit tests from slow system-wide tests; each new unit test exercises
 only a subset of the functionality
@@ -103,7 +103,7 @@ hierarchies and overridden \verb|__new__|, or other classes like in the factory 
 \subsubsection{Arbitrary Object Modification}
 Explained by Politz et al. \cite{politz2013python}, the semantics of Python allow for arbitrary modification
 to object attributes at any time in the
-programs. The shape of an object, which we define to be the number and names of fields of an object can
+program. The shape of an object, which we define to be the number and names of fields of an object, can
 change at any point in a Python program.
 
 While this is a problem in unmanaged languages like C++, and the authors of \cite{bach2020determining}
@@ -137,7 +137,7 @@ of $A$, $S$, $R$, $E$, and $S'$.
 
 External state, $S$ and $S'$ are handled in a rules-based manner. Different effects are classified using a rules-based system that
 maps specific bytecode instructions and C function calls to known side-effect types (e.g., the instruction \verb|STORE GLOBAL| indicates
-global variable rebinding, calls to \verb|list.append| indicates mutation of a global variable).
+global variable rebinding, calls to \verb|list.append| indicate mutation of a global variable).
 
 The handling of function arguments $A$ and function return values $R$ are remarkably similar to ExploTest. Pythoscope instruments
 the bytecode for \verb|CALL_FUNCTION| instructions, and then serializes the function arguments and results, just like ExploTest.
@@ -152,7 +152,7 @@ program execution.
 Pythoscope has been abandoned, its last commit was on 2016-08-23, as of 2026-03-26. It only supports Python 2.7.
 
 \subsection{Auger}
-Auger, created by Laffra, et al., \cite{augerblogspot} is another Python 3 unit test carving tool. It functions more similarly to
+Auger, created by Laffra et al.\ \cite{augerblogspot} is another Python 3 unit test carving tool. It functions more similarly to
 the previous iteration of ExploTest. The tool works by using the \verb|sys.settrace| API, which intercepts every call and return during
 program execution. It takes note of candidate function-under-tests, and if the function-under-test belongs to a class, it performs
 simple, action based capture by re-constructing the call the \verb|__init__|. All serialization is done via \verb|__repr__|.
@@ -169,7 +169,7 @@ Auger has been abandoned, its last commit was on 2019-02-21, as of 2026-03-26. I
 ExploTest is a unit test carving tool, originally conceived by Zihao Huang under the supervision of Dr. Caroline Lemieux and substantially rewritten for this thesis. A full attribution appears in the preface.
 
 
-ExploTest can be used in an exploratory manner for exploratory testing or for creation regression test suites
+ExploTest can be used in an exploratory manner for exploratory testing or for creating regression test suites
 from system test runs.
 As defined by Kaner \cite{kaner2008tutorial}, exploratory testing is an unscripted technique where the software designer verifies the program's
 correctness using their own intuition and domain knowledge to uncover defects and create test oracles. For this thesis, it primarily
@@ -206,7 +206,7 @@ two execution results $R_1$ and $R_2$, AutoAssert tries to apply the following r
         Create a comparison against the literal.
   \item Are $R_1$ and $R_2$ equal under their built-in \verb|__eq__| method? $\rightarrow$ Perform an equality assertion with $R_1$.
   \item Does the function have a custom \verb|__repr__| method, and are reprs of $R_1$ and $R_2$ equal? $\rightarrow$ Assert against the \verb|__repr__|s of $R_1$.
-  \item Does $R_1$ and $R_2$ have a length and are they equal? $\rightarrow$ Create an assertion on the length.
+  \item Do $R_1$ and $R_2$ have a length and are they equal? $\rightarrow$ Create an assertion on the length.
   \item Are the types of $R_1$ and $R_2$ equal under \verb|type()|? $\rightarrow$ Assert against the name of the type (e.g., \verb|type(return_value).__name__ == "str"|)
   \item If none of the criteria are met, do not create an assertion.
 \end{itemize}
