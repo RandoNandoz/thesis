@@ -1,12 +1,8 @@
-\chapter{Discussion and Future Work}
+\chapter{Discussion and Conclusion}
 
 \section{Discussion}
 
-Synthesizing all our RQ answers, we find ExploTest is an effective tool for developers to carve unit tests that correctly
-exercise the function under test, with the caveat that the tool's assertions are often extremely poor. The performance penalty of the
-tool is low. Additionally, the burden for developer time in using the tool is also low: a proposed process of using ExploTest
-overlaps with many of the first parts of a systemic debugging process. Performance wise, the benefit of ExploTest carving tests is
-seen most with long-running system tests in complex programs like web frameworks.
+Here we interpret some results of the RQs.
 
 \subsection{Importance of external state}
 In RQ1 and RQ2, we discovered limited external state was a factor that contributed to unit tests that
@@ -64,7 +60,7 @@ without experience with the tool can accomplish.
 We did not compare the tool to any similar tools, and well maintained Python unit test carving tools are few and far between.
 This adds a challenge to interpreting the results of RQ1. A future work should compare different unit testing techniques,
 namely, naive LLM-based test generation (i.e., prompting an agentic AI tool to write a test for our functions), and search based software
-testing tools like Pynguin and Codamosa \cite{lemieux2023codamosa}.
+testing tools like Pynguin and CodaMOSA \cite{lemieux2023codamosa}.
 
 \section{Future Work}
 
@@ -79,7 +75,28 @@ sequences may be sufficient to run the code that re-generates most of the object
 
 
 \subsection{Improved oracle generation}
-The approach used in the tool to generate oracles is very naive. It assumes the oracle for the test is simply the output of the function, however, for many functions, especially methods
+The approach used in the tool to generate oracles is naive. It assumes the oracle for the test is simply the output of the function, however, for many functions, especially methods
 that belong to classes, the primary effect of the function is to modify the object that the method was invoked on (i.e., \verb|self|), rather than the output of the function. Additionally, state outside
 of the parameters of the function should also be considered, as some functions may be used (and should be tested) for their effects on global state. We suggest future avenues for improvement, which may
 include a mix of LLM-guided property-based testing, or a more traditional approach, taking inspiration from the bytecode instrumentation that Pythoscope employs.
+
+\section{Conclusion}
+
+% Synthesizing all our RQ answers, we find ExploTest is an effective tool for developers to carve unit tests that correctly
+% exercise the function under test, with the caveat that the tool's assertions are often extremely poor. The performance penalty of the
+% tool is low. Additionally, the burden for developer time in using the tool is also low: a proposed process of using ExploTest
+% overlaps with many of the first parts of a systemic debugging process. Performance wise, the benefit of ExploTest carving tests is
+% seen most with long-running system tests in complex programs like web frameworks.
+
+Synthesizing all our RQ answers, we find ExploTest, and consequently static, unit test carving in Python is a sufficiently
+effective tool to seed unit test suites with behaviour carved from system tests. It is best used when the system test is already
+expensive, consistent with the formative test factoring work by Saff \cite*{saff2005automatic,saff2004mock}. Investigating cognitive
+and developer performance overhead, we find a proposed usage of the tool overlaps with standard systematic debugging procedure,
+meaning ExploTest can be integrated into existing developer workflows with little friction.
+
+The oracle generation problem described by \cite{barr2014oracle} still persists, despite the rich integration test input.
+Therefore, this style of state-based
+carving is viable as a byproduct of debugging, capturing bug-triggering input surfaced during bug localization which
+may assist with seeding a unit test suite with inputs. We advise avenues for future work: improved oracle generation to
+solve the oracle problem, via program state instrumentation like Pythoscope, or LLM-guided oracle generation; improved
+argument recreation through action-based carving; a less targeted runner that carves all tests like those found in ARTISAN \cite{gambi2023action}.

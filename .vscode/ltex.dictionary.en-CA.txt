@@ -22,3 +22,5 @@ correctly-excerising
 viabilities
 PyTest
 novo
+unserializable
+AutoAssert

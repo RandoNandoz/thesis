@@ -362,6 +362,9 @@ OS-level resources, there must exist some degree of action-based carving require
 \subsection{RQ5: Tool usage}
 RQ5 poses: \textit{What is the procedure to use ExploTest to catch defects in software?}
 
+We'll proceed with a proposed usage of the tool that the author uses, and used for this thesis, and compare
+it to a standard systematic debugging workflow by Zeller \cite{zeller2009programs}.
+
 \subsubsection{Author's technique}
 We discuss the technique the author used to carve the tests for QuAC first.
 
@@ -420,9 +423,11 @@ The bug report is in Figure~\ref{fig:ipython-bug-report}.
 
 \subsubsection{Similarity to standard debugging procedure}
 
-In ``Why Programs Fail: A Guide to Systematic Debugging'' \cite{zeller2009programs}, Zeller describes the seven steps
-in debugging with the TRAFFIC initialism below. We interpret this procedure as how developers typically debug, and how
-they should debug. Let's analyze the similarity between the ExploTest usage process and the TRAFFIC procedure.
+In ``Why Programs Fail: A Guide to Systematic Debugging'', an industry standard work on systematic debugging
+\cite{zeller2009programs}, Zeller describes a standard, seven-step debugging procedure called `TRAFFIC'.
+We interpret this procedure as how developers typically debug.
+Let's analyze the similarity between the ExploTest usage process and the TRAFFIC procedure below. On the right,
+are the steps in the TRAFFIC procedure, and on the right, the proposed part of the ExploTest usage procedure.
 
 \begin{itemize}
     \item \textbf{T}rack the problem in the database $\rightarrow$ Step 1, read the bug report
@@ -434,7 +439,7 @@ they should debug. Let's analyze the similarity between the ExploTest usage proc
     \item \textbf{C}orrect the defect $\rightarrow$ No correspondence
 \end{itemize}
 
-From this analysis, we observe that the first five steps of the
+We observe that the first five steps of the
 TRAFFIC procedure: tracking, reproducing, finding, and focusing
 on infection origins are steps that a developer performing
 systematic debugging would perform regardless of whether they
@@ -453,7 +458,7 @@ but is instead captured as a unit test.
 \noindent\fbox{%
     \parbox{\textwidth}{%
         A proposed usage of the tool by the author is presented, and compared with standard systematic debugging techniques.
-        The proposed usage has significant overlap with the standard systematic debugging workflow, indicating a low cognitive
+        The proposed usage has significant overlap with the standard systematic debugging workflow, suggesting a low cognitive
         burden to ExploTest use.
     }%
 }
